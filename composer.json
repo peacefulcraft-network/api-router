@@ -10,7 +10,7 @@
     ],
     "autoload":{
         "psr-4":{
-            "ncsa\\phpmvj\\":"src/",
+            "ncsa\\phpmvj\\":"src/"
         }
     },
     "minimum-stability": "stable",
