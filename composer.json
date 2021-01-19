@@ -1,0 +1,24 @@
+{
+    "name": "ncsa/php-mvj",
+    "description": "A PHP MVJ[son] framework for building RESTful APIs",
+    "type": "library",
+    "authors": [
+        {
+            "name": "NCSA Dev-Team",
+            "email": "dev-team@ncsa.tech"
+        }
+    ],
+    "autoload":{
+        "psr-4":{
+            "ncsa\\phpmvj\\":"src/",
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.4",
+        "ext-bcmath": "*",
+        "ext-ldap": "*",
+        "ext-mbstring": "*",
+        "ext-openssl": "*"
+    }
+}
