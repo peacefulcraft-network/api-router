@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmvj\enums;
+namespace ncsa\phpmvj\enum;
 
 use ReflectionClass;
 
