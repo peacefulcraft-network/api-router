@@ -1,6 +1,5 @@
 {
     "name": "ncsa/php-mvj",
-    "version": "0.0.2",
     "description": "A PHP MVJ[son] framework for building RESTful APIs",
     "type": "library",
     "authors": [
