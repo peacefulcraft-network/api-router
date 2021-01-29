@@ -1,7 +1,7 @@
 # This file is a template, and might need editing before it works on your project.
 # Publishes a tag/branch to Composer Packages of the current project
 publish:
-  stage: publish
+  stage: build
   only:
   - tags
   image: curlimages/curl:latest
