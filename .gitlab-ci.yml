@@ -6,7 +6,7 @@ stages:
 cache:
   paths:
     - vendor/
-    - tests/vendor/
+    - test/vendor/
 
 install:
   image: containerhub.ncsa.tech:5000/composer:2
@@ -21,6 +21,7 @@ test:
   script:
     - test/scripts/run-tests.sh
 
+# Only used in php-mvj-release
 publish:
   image: curlimages/curl:latest
   stage: publish
