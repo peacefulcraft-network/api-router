@@ -18,6 +18,9 @@ install:
 test:
   image: containerhub.ncsa.tech:5000/php:8.0-cli
   stage: test
+  artifacts:
+    reports:
+      junit: phpunit-report.xml
   script:
     - test/scripts/run-tests.sh
 
