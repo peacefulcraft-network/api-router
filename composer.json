@@ -20,8 +20,6 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-        "ext-bcmath": "*",
-        "ext-ldap": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*"
     },
