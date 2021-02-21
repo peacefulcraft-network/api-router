@@ -11,8 +11,7 @@ class BasicHTTPApplicationTest extends ControllerTest{
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($curl);
 
-				Response::setHTTPResponseCode(200);
-        $expected = new Response(array("message" => "Hello World!"));
+        $expected = new Response(200, array("message" => "Hello World!"));
         $expected = json_encode($expected);
 
         $this->assertEquals(curl_errno($curl), 0);
@@ -28,8 +27,7 @@ class BasicHTTPApplicationTest extends ControllerTest{
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($curl);
 
-				Response::setHTTPResponseCode(200);
-        $expected = new Response([], 404, 'Resource not found');
+        $expected = new Response(404, [], 0, 'Resource not found');
         $expected = json_encode($expected);
 
         $this->assertEquals(curl_errno($curl), 0);

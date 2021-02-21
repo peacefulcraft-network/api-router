@@ -13,9 +13,13 @@ class Application {
   private static $_router;
 		public static function getRouter():Router { return SELF::$_router; }
 
+  private static $_response;
+    public static function getResponse():Response { return SELF::$_response; }
+
   public function __construct(array $config) {
     SELF::$_config = $config;
 		SELF::$_router = new Router();
+    SELF::$_response = new Response();
   }
 
   public function handle() {
@@ -24,10 +28,15 @@ class Application {
     session_start();
 
     if (Router::hasMatchedHandler()) {
-      echo json_encode(Router::getMatchedHandler()->handle());
+      Router::getMatchedHandler()->handle();
+      http_response_code(SELF::$_response->getHttpResponseCode());
+      echo json_encode(SELF::$_response);
     } else {
-      Response::setHTTPResponseCode(Response::HTTP_NOT_FOUND);
-      echo json_encode(new Response([], 404, 'Resource not found'));
+      SELF::$_response->setHttpResponseCode(Response::HTTP_NOT_FOUND);
+      SELF::$_response->setErrorMessage('Resource not found');
+      echo json_encode(SELF::$_response);
     }
+
+    ob_flush();
   }
 }

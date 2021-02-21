@@ -2,7 +2,7 @@
 namespace ncsa\phpmvj\router;
 
 interface RequestHandler {
-    public function handle(): Response;
+    public function handle(): void;
 }
 
 ?>

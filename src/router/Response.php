@@ -2,13 +2,24 @@
 namespace ncsa\phpmvj\router;
 
 class Response implements \JsonSerializable{
+  private $_httpResponseCode;
+    public function setHttpResponseCode(int $httpResponseCode): void { $this->_httpResponseCode = $httpResponseCode; }
+    public function getHttpResponseCode(): int { return $this->_httpResponseCode; }
+  
   private $_errorCode;
+    public function setErrorCode(int $errorCode): void { $this->_errorCode = $errorCode; }
+    public function getErrorCode(): int {return $this->_errorCode; }
   
   private $_errorMessage;
+    public function setErrorMessage(string $errorMessage): void { $this->_errorMessage = $errorMessage; }
+    public function getErrorMessage(): string { return $this->_errorMessage; }
 
   private $_data;
+    public function setData(array $data): void { $this->_data = $data; }
+    public function getData(): array { return $this->_data; }
 
-  public function __construct(array $data = [], int $errorCode = 0, string $errorMessage = '') {
+  public function __construct(int $httpResponseCode = 200, array $data = [], int $errorCode = 0, string $errorMessage = '') {
+    $this->_httpResponseCode = $httpResponseCode;
     $this->_data = $data;
     $this->_errorCode = $errorCode;
     $this->_errorMessage = $errorMessage;
@@ -16,14 +27,11 @@ class Response implements \JsonSerializable{
 
   public function jsonSerialize() {
     return [
+      'http_response_code'=>$this->_httpResponseCode,
       'error_no'=>$this->_errorCode,
       'error' => $this->_errorMessage,
       'data' => $this->_data
     ];
-  }
-
-  public static function setHTTPResponseCode(int $code) {
-    http_response_code($code);
   }
 
   public const HTTP_OK = 200;
