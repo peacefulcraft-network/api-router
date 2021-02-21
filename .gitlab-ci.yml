@@ -1,8 +1,17 @@
-# This file is a template, and might need editing before it works on your project.
-# Publishes a tag/branch to Composer Packages of the current project
+stages:
+  - test
+  - publish
+
+test:
+  image: containerhub.ncsa.tech:5000/php:8.0-cli
+  stage: test
+  script:
+    - composer require
+    - composer run-script test
+
 publish:
   image: curlimages/curl:latest
-  stage: build
+  stage: publish
   variables:
     URL: "$CI_SERVER_PROTOCOL://$CI_SERVER_HOST:$CI_SERVER_PORT/api/v4/projects/$CI_PROJECT_ID/packages/composer?job_token=$CI_JOB_TOKEN"
   script:
@@ -18,3 +27,5 @@ publish:
         echo "Could not create package - Code $code - $body";
         exit 1;
       fi
+  when: manual
+  only: ['tags']

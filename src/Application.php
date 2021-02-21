@@ -1,6 +1,7 @@
 <?php
 namespace ncsa\phpmvj;
 
+use ncsa\phpmvj\router\Response;
 use \ncsa\phpmvj\router\Router;
 
 class Application {
@@ -25,6 +26,8 @@ class Application {
     if (Router::hasMatchedHandler()) {
       echo json_encode(Router::getMatchedHandler()->handle());
     } else {
+      Response::setHTTPResponseCode(Response::HTTP_NOT_FOUND);
+      echo json_encode(new Response([], 404, 'Resource not found'));
     }
   }
 }

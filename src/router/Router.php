@@ -103,7 +103,7 @@ class Router {
 					}
 					$match = ['param_count' => 0, 'controller' => Application::getDefaultCORSController(), 'path'=>$path ];
 				} else {
-					echo '404';
+          // Return with no matched handler
 					return;
 				}
       }

@@ -1,0 +1,9 @@
+name: php-mvj-bash
+namespace: $HOSTNAME
+image: containerhub.ncsa.tech:5000/php:8.0-cli
+workdir: /usr/src/myapp
+command: ["scripts/start-dev-server.sh"]
+sync:
+  - .:/usr/src/myapp
+forward:
+  - 8081:8081 # PHP Web server (http)

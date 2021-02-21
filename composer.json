@@ -14,6 +14,9 @@
             "ncsa\\phpmvj\\":"src/"
         }
     },
+    "archive": {
+        "exclude": ["/test", "/scripts", "/.vscode", "/okteto.yml", "/.stignore"]
+    },
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
@@ -21,5 +24,20 @@
         "ext-ldap": "*",
         "ext-mbstring": "*",
         "ext-openssl": "*"
+    },
+    "scripts": {
+        "kube-dev:start": [
+            "Composer\\Config::disableProcessTimeout",
+            "/usr/local/bin/okteto up -f okteto.yml",
+            "/usr/local/bin/okteto down -f okteto.yml"
+        ],
+        "kube-dev:stop": [
+            "Composer\\Config::disableProcessTimeout",
+            "/usr/local/bin/okteto down -f okteto.yml"
+        ],
+        "test": [
+            "Composer\\Config::disableProcessTimeout",
+            "test/scripts/run-tests.sh"
+        ]
     }
 }

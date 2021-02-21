@@ -1,0 +1,3 @@
+Mini PHP-MVJ project for development and unit testing. This is a seperate composer project to avoid contaminating the classmap of PHP-MVJ when it is used in actual projects.
+
+This project installs PHP-MVJ as a depedency, treating the actual /src folder as a local package repository. Running `composer install` from `/src/test/src` creates a sym link in `/src/test/src/vendor/ncsa` so any updates made to PHP-MVJ should automatically appear in the vendor folder of PHP-MVJ-Test
