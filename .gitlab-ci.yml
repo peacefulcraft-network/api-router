@@ -13,6 +13,7 @@ install:
   stage: install
   script:
     - composer require
+    - composer --working-dir=test/ require
 
 test:
   image: containerhub.ncsa.tech:5000/php:8.0-cli
