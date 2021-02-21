@@ -1,3 +1,8 @@
 <?php
-$config = [];
+$config = [
+	'cors' => [
+		'origin' => '*',
+		'max-age' => 3600
+	]
+];
 ?>

@@ -6,11 +6,21 @@ use ncsa\phpmvj\exceptions\UnrouteableRequestException;
 use ncsa\phpmvj\util\Validator;
 
 class Router {
-  private static $_routes = [];
+  private static $_routes = [
+    'DELETE'=>[],
+    'GET'=>[],
+    'PATCH'=>[],
+    'POST'=>[],
+    'PUT'=>[],
+    'OPTIONS'=>[],
+  ];
     public static function getRoutes():array { return SELF::$_routes; }
 
   private static $_route = "";
     public static function getRoute():string { return SELF::$_route; }
+
+  private static $_is_preflight = false;
+    public static function isPreflight():bool { return SELF::$_is_preflight; }
 
   private static $_uri = "";
     public static function getUri():string { return SELF::$_uri; }
@@ -35,10 +45,12 @@ class Router {
     $path = explode('/', $route);
 
     $method = strtoupper($method);
-    if (!isset(SELF::$_routes[$method])) {
-      SELF::$_routes[$method] = [];
-    }
     SELF::_registerRoute($path, SELF::$_routes[$method], $handler);
+
+    // All routes need to have an OPTIONS round as well. If the call didn't already register one, do it automatically for them.
+    if ($method !== 'OPTIONS') {
+      SELF::_registerRoute($path, SELF::$_routes['OPTIONS'], $handler);
+    }
   }
 
     /**
@@ -81,6 +93,10 @@ class Router {
         SELF::$_uri = substr(SELF::$_uri, 0, $queryParamStart);
       } 
 
+      if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        SELF::$_is_preflight = true;
+      }
+
       $path = explode('/', SELF::$_uri);
       
       // Shift off the empty string from a leading forward slash
@@ -96,16 +112,8 @@ class Router {
       }
       
       if ($match  === null) {
-				// Fallback to default CORS controller if an override is not specified
-				if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-					if (Application::getDefaultCORSController() === null) {
-						throw new UnrouteableRequestException("Unroutable request HTTP/" . $_SERVER['request_method'] . ' ' . $path  . '.');
-					}
-					$match = ['param_count' => 0, 'controller' => Application::getDefaultCORSController(), 'path'=>$path ];
-				} else {
-          // Return with no matched handler
-					return;
-				}
+        // Return with no matched handler
+        return;
       }
 
       SELF::$_route = $match['path'];

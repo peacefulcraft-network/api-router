@@ -8,7 +8,6 @@ class Application {
 
   private static $_config = null;
     public static function getConfig():array { return SELF::$_config; }
-			public static function getDefaultCORSController() { return @SELF::$_config['cors']['default_controller']; }
 
   private static $_router;
 		public static function getRouter():Router { return SELF::$_router; }
@@ -23,14 +22,23 @@ class Application {
   }
 
   public function handle() {
+    global $config;
     Router::resolve();
 
     session_start();
 
     if (Router::hasMatchedHandler()) {
-      Router::getMatchedHandler()->handle();
-      http_response_code(SELF::$_response->getHttpResponseCode());
-      echo json_encode(SELF::$_response);
+      // Set CORS headers
+      Router::getMatchedHandler()->options();
+      if (Router::isPreflight()) {
+        header('Access-Control-Allow-Credentials: ', true);
+        header('Access-Control-Max-Age: ' . $config['cors']['max-age']);
+      } else {
+        // If not preflight (HTTP/OPTIONS), then send actual content too
+        Router::getMatchedHandler()->handle();
+        http_response_code(SELF::$_response->getHttpResponseCode());
+        echo json_encode(SELF::$_response);
+      }
     } else {
       SELF::$_response->setHttpResponseCode(Response::HTTP_NOT_FOUND);
       SELF::$_response->setErrorMessage('Resource not found');
