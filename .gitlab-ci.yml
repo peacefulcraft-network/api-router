@@ -1,13 +1,24 @@
 stages:
+  - install
   - test
   - publish
+
+cache:
+  paths:
+    - vendor/
+    - tests/vendor/
+
+install:
+  image: containerhub.ncsa.tech:5000/composer:2
+  stage: install
+  script:
+    - composer require
 
 test:
   image: containerhub.ncsa.tech:5000/php:8.0-cli
   stage: test
   script:
-    - composer require
-    - composer run-script test
+    - test/scripts/run-tests.sh
 
 publish:
   image: curlimages/curl:latest
