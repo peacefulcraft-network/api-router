@@ -223,7 +223,6 @@ class Router {
        * Supports JSON. multipart/form & x-www-form-urlencoded parsed by PhP nativley
        */
       private static function _parseRequestBody() {
-        // var_dump(file_get_contents('php://input'));
         if (strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
           $requestBody = json_decode(file_get_contents('php://input'), true);
           if (json_last_error() === JSON_ERROR_NONE) {
