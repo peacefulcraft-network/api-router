@@ -54,7 +54,7 @@ class HTTPPostTest extends ControllerTest {
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HEADER, true);
 		curl_setopt($curl, CURLOPT_NOBODY, true);
-		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
 		$result = explode(PHP_EOL, trim(curl_exec($curl)));
 
 		foreach($result as $header) {

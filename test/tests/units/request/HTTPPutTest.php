@@ -2,15 +2,15 @@
 
 use ncsa\phpmvj\router\Response;
 
-class HTTPPatchTest extends ControllerTest {
-	public function testApplicationShouldParseTextualPatchBodyToGlobalPost() {
+class HTTPPutTest extends ControllerTest {
+	public function testApplicationShouldParseTextualPostBodyToGlobalPost() {
 		$curl = curl_init();
 		$requestData = ['user'=>'ncsa', 'actions'=>'delete'];
 		$requestDataString = json_encode($requestData);
 
 		curl_setopt($curl, CURLOPT_URL, 'http://localhost:8081/echo');
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
+		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
 		curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Content-Length: ' . strlen($requestDataString)]);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $requestDataString);
 		$result = curl_exec($curl);
@@ -23,14 +23,14 @@ class HTTPPatchTest extends ControllerTest {
 		curl_close($curl);
 	}
 
-	public function testApplicationShouldParseTextualPatchBodyToGlobalPostAndUrlParamatersToGlobalGet() {
+	public function testApplicationShouldParseTextualPostBodyToGlobalPostAndUrlParamatersToGlobalGet() {
 		$curl = curl_init();
 		$requestData = ['user'=>'ncsa', 'actions'=>'delete'];
 		$requestDataString = json_encode($requestData);
 
 		curl_setopt($curl, CURLOPT_URL, 'http://localhost:8081/echo?query=can%20you%20parse%20url%20paramaters%20on%20the%20post%20body%20too');
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
+		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
 		curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Content-Length: ' . strlen($requestDataString)]);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $requestDataString);
 		$result = curl_exec($curl);
@@ -54,7 +54,7 @@ class HTTPPatchTest extends ControllerTest {
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HEADER, true);
 		curl_setopt($curl, CURLOPT_NOBODY, true);
-		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
+		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
 		$result = explode(PHP_EOL, trim(curl_exec($curl)));
 
 		foreach($result as $header) {
