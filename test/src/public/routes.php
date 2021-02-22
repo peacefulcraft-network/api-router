@@ -9,4 +9,5 @@ Router::registerRoute('PATCH', 'echo', '\ncsa\phpmvj\test\controllers\request\HT
 Router::registerRoute('PUT', 'echo', '\ncsa\phpmvj\test\controllers\request\HTTPPostEcho');
 Router::registerRoute('OPTIONS', 'options', '\ncsa\phpmvj\test\controllers\request\HTTPOptions');
 Router::registerRoute('POST', 'file-upload', '\ncsa\phpmvj\test\controllers\request\HTTPFileUpload');
+Router::registerRoute('GET', 'file-download/:filename', '\ncsa\phpmvj\test\controllers\request\HTTPFileDownload');
 ?>

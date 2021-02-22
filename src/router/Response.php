@@ -2,10 +2,16 @@
 namespace ncsa\phpmvj\router;
 
 class Response implements \JsonSerializable{
+  private $_isRaw;
+    public function setResponseTypeRaw(bool $isRaw): void { $this->_isRaw = $isRaw; }
+    public function getResponseTypeRaw(): bool { return $this->_isRaw; }
+
   private $_httpResponseCode;
-    public function setHttpResponseCode(int $httpResponseCode): void { $this->_httpResponseCode = $httpResponseCode; }
     public function getHttpResponseCode(): int { return $this->_httpResponseCode; }
   
+  private $_responseHeaders;
+    public function getResponseHeaders(): array { return $this->_responseHeaders; }
+
   private $_errorCode;
     public function setErrorCode(int $errorCode): void { $this->_errorCode = $errorCode; }
     public function getErrorCode(): int {return $this->_errorCode; }
@@ -19,19 +25,47 @@ class Response implements \JsonSerializable{
     public function getData(): array { return $this->_data; }
 
   public function __construct(int $httpResponseCode = 200, array $data = [], int $errorCode = 0, string $errorMessage = '') {
+    $this->_isRaw = false;
     $this->_httpResponseCode = $httpResponseCode;
     $this->_data = $data;
     $this->_errorCode = $errorCode;
     $this->_errorMessage = $errorMessage;
   }
 
+  public function setHttpResponseCode(int $httpResponseCode): void {
+    $this->_httpResponseCode = $httpResponseCode;
+    http_response_code($httpResponseCode);
+  }
+
+  /**
+   * Set an HTTP Resonse header.
+   * This method exists primarly for accounting. Having all headers
+   * be set by one method means we can more easily track when and what
+   * headers are set for logging and debugging.
+   */
+  public function setHeader($headerName, $headerValue): void {
+    $this->_responseHeaders[$headerName] = $headerValue;
+    header($headerName . ': ' . $headerValue);
+  }
+
   public function jsonSerialize() {
     return [
-      'http_response_code'=>$this->_httpResponseCode,
       'error_no'=>$this->_errorCode,
       'error' => $this->_errorMessage,
       'data' => $this->_data
     ];
+  }
+
+  /**
+   * If Response is configured as raw ($_isRaw), Response is muted
+   * and output is presumed to be printed elsewhere in the application.
+   */
+  public function __toString() {
+    if ($this->_isRaw) {
+      return '';
+    } else {
+      return json_encode($this);
+    }
   }
 
   public const HTTP_OK = 200;

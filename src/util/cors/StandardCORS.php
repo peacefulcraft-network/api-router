@@ -1,6 +1,7 @@
 <?php
 namespace ncsa\phpmvj\util\cors;
 
+use ncsa\phpmvj\Application;
 use ncsa\phpmvj\router\Router;
 
 trait StandardCORS {
@@ -10,9 +11,9 @@ trait StandardCORS {
 		global $config;
 		$allowed_origin = $this->_resolveAllowedOrigin($config['cors']['origin'], Router::getUri());
 
-		header('Access-Control-Allow-Origin: ' . $allowed_origin);
+		Application::getResponse()->setHeader('Access-Control-Allow-Origin', $allowed_origin);
 		if (Router::isPreflight()) {
-			header('Access-Control-Allow-Methods: OPTIONS, ' . strtoupper($methods));
+			Application::getResponse()->setHeader('Access-Control-Allow-Methods', 'OPTIONS, ' . strtoupper($methods));
 		}
 	}
 }

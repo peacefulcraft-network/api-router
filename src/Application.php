@@ -19,6 +19,7 @@ class Application {
     SELF::$_config = $config;
 		SELF::$_router = new Router();
     SELF::$_response = new Response();
+    Application::getResponse()->setHeader('Content-Type', 'application/json');
   }
 
   public function handle() {
@@ -31,18 +32,20 @@ class Application {
       // Set CORS headers
       Router::getMatchedHandler()->options();
       if (Router::isPreflight()) {
-        header('Access-Control-Allow-Credentials: ', true);
-        header('Access-Control-Max-Age: ' . $config['cors']['max-age']);
-      } else {
-        // If not preflight (HTTP/OPTIONS), then send actual content too
-        Router::getMatchedHandler()->handle();
-        http_response_code(SELF::$_response->getHttpResponseCode());
-        echo json_encode(SELF::$_response);
+        SELF::$_response->setHeader('Access-Control-Allow-Credentials', true);
+        SELF::$_response->setHeader('Access-Control-Max-Age', $config['cors']['max-age']);
+        ob_flush();
+        return;
       }
+
+      // If not preflight (HTTP/OPTIONS), perform the requested action
+      Router::getMatchedHandler()->handle();
+      echo SELF::$_response;
+
     } else {
       SELF::$_response->setHttpResponseCode(Response::HTTP_NOT_FOUND);
       SELF::$_response->setErrorMessage('Resource not found');
-      echo json_encode(SELF::$_response);
+      echo SELF::$_response;
     }
 
     ob_flush();
