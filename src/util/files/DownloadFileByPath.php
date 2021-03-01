@@ -2,6 +2,7 @@
 namespace ncsa\phpmvj\util\files;
 
 use ncsa\phpmvj\Application;
+use ncsa\phpmvj\router\Response;
 use RuntimeException;
 
 trait DownloadFileByPath {
@@ -9,10 +10,12 @@ trait DownloadFileByPath {
 	 * Co-opts response to send back a file for download.
 	 * Function assumes input has already been sanitized
 	 * and that that provided filepath exists.
+	 * @param response The response object to manipulate
 	 * @param file Fully qualified path to the target file
+	 * @param download_name Name of the file to send to the user. Defaults to filename on disk.
 	 * @throws RuntimeException when unable to open requested file
 	 */
-	private function _downloadFileByPath(string $file, string $download_name = null): void {
+	private function _downloadFileByPath(Response $response, string $file, string $download_name = null): void {
 		if ($download_name === null || strlen(trim($download_name)) === 0) {
 			$download_name = basename($file);
 		}
@@ -21,12 +24,12 @@ trait DownloadFileByPath {
 		$content_length = filesize($file);
 
 		// Disable Response output
-		Application::getResponse()->setResponseTypeRaw(true);
-		Application::getResponse()->setHeader('Content-Type', 'application/octet-stream');
-		Application::getResponse()->setHeader('Content-Description', 'File Transfer');
-		Application::getResponse()->setHeader('Content-Disposition', 'attachment; filename=' . $download_name);
-		Application::getResponse()->setHeader('Content-Transfer-Encoding', 'binary');
-		Application::getResponse()->setHeader('Content-Length', $content_length);
+		$response->setResponseTypeRaw(true);
+		$response->setHeader('Content-Type', 'application/octet-stream');
+		$response->setHeader('Content-Description', 'File Transfer');
+		$response->setHeader('Content-Disposition', 'attachment; filename=' . $download_name);
+		$response->setHeader('Content-Transfer-Encoding', 'binary');
+		$response->setHeader('Content-Length', $content_length);
 		ob_clean();
 		readfile($file);
 	}

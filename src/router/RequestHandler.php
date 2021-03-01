@@ -9,7 +9,7 @@ interface RequestHandler {
      * For more information on CORS and HTTP/OPTIONS, see
      * https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
      */
-    public function options(): void;
+    public function options(array $config, Request $request, Response $response): void;
 
     /**
      * Perform the logic, operation, query, etc which this route is designed to execute.
@@ -17,7 +17,7 @@ interface RequestHandler {
      * is matched by the router. Routes are reigstered with Router::registerRoute().
      * A single controller can be registered to several different routes.
      */
-    public function handle(): void;
+    public function handle(array $config, Request $request, Response $response): void;
 }
 
 ?>

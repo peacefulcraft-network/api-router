@@ -1,12 +1,14 @@
 <?php
 namespace ncsa\phpmvj\util\cors;
 
+use ncsa\phpmvj\router\Request;
+use ncsa\phpmvj\router\Response;
 use ncsa\phpmvj\router\Router;
 
 trait StandardPatch {
 	use StandardCORS;
 
-	public function options(): void {
-		$this->setCORSHeaders('PATCH');
+	public function options(array $config, Request $request, Response $response): void {
+		$this->setCORSHeaders($request, $response, 'PATCH');
 	}
 }
