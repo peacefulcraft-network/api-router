@@ -31,6 +31,13 @@ class Request {
 		public function setBody(array $body):void { $this->_body = $body; } 
 
 	/**
+	 * List of Middleware functions to be invoked during request pre-processing.
+	 */
+	private array $_middleware = [];
+		public function getMiddleware(): array { return $this->_middleware; }
+		public function setMiddleware(array $middleware) { $this->_middleware = $middleware; }
+
+	/**
 	 * Indicates whether the Request has been resolved to a RequestHandler by a router.
 	 */
 	private bool $_has_matched_handler = false;

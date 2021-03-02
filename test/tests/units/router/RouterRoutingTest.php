@@ -8,10 +8,10 @@ class RouterRoutingTest extends TestCase {
 
 	public function testStaticPathMatching() {
 		$router = new Router();
-		$router->registerRoute(RequestMethod::OTHER, '/', '\level0');
-		$router->registerRoute(RequestMethod::OTHER, '/deeper', '\level0\level1');
-		$router->registerRoute(RequestMethod::OTHER, '/even/deeper', '\level0\level1\level2');
-		$router->registerRoute(RequestMethod::OTHER, '/you/get/the/idea', '\level0\level1\level2\level3');
+		$router->registerRoute(RequestMethod::OTHER, '/', [], '\level0');
+		$router->registerRoute(RequestMethod::OTHER, '/deeper', [], '\level0\level1');
+		$router->registerRoute(RequestMethod::OTHER, '/even/deeper', [], '\level0\level1\level2');
+		$router->registerRoute(RequestMethod::OTHER, '/you/get/the/idea', [], '\level0\level1\level2\level3');
 		$handler = $router->resolve('/');
 		$this->assertTrue($handler->hasMatchedHandler());
 		$this->assertEquals('\level0', $handler->getMatchedHandler());
@@ -31,11 +31,11 @@ class RouterRoutingTest extends TestCase {
 
 	public function testDynamicPathMatching() {
 		$router = new Router();
-		$router->registerRoute(RequestMethod::OTHER, '/', '\level0');
-		$router->registerRoute(RequestMethod::OTHER, '/:val1', '\level0\level1');
-		$router->registerRoute(RequestMethod::OTHER, '/even/deeper', '\level0\level1\level2');
-		$router->registerRoute(RequestMethod::OTHER, '/even/trickier/complex/:val1', '\level0\level1\level2\level3');
-		$router->registerRoute(RequestMethod::OTHER, '/even/:val1/:val2/idea', '\level0\level1\level2\level3');
+		$router->registerRoute(RequestMethod::OTHER, '/', [], '\level0');
+		$router->registerRoute(RequestMethod::OTHER, '/:val1', [], '\level0\level1');
+		$router->registerRoute(RequestMethod::OTHER, '/even/deeper', [], '\level0\level1\level2');
+		$router->registerRoute(RequestMethod::OTHER, '/even/trickier/complex/:val1', [], '\level0\level1\level2\level3');
+		$router->registerRoute(RequestMethod::OTHER, '/even/:val1/:val2/idea', [], '\level0\level1\level2\level3');
 
 		$handler = $router->resolve('/');
 		$this->assertTrue($handler->hasMatchedHandler());

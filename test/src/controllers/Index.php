@@ -11,6 +11,7 @@ class Index implements RequestHandler {
 
 	public function handle(array $config, Request $request, Response $response): void {
 		$response->setData(['message'=>'Hello World!']);
+		$response->setHttpResponseCode(Response::HTTP_OK);
 	}
 }
 

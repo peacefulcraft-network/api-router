@@ -24,9 +24,9 @@ class Response implements \JsonSerializable{
 		public function setData(array $data): void { $this->_data = $data; }
 		public function getData(): array { return $this->_data; }
 
-	public function __construct(int $httpResponseCode = 200, array $data = [], int $errorCode = 0, string $errorMessage = '') {
+	public function __construct(int $httpResponseCode = 418, array $data = [], int $errorCode = 0, string $errorMessage = '') {
 		$this->_isRaw = false;
-		$this->_httpResponseCode = $httpResponseCode;
+		$this->setHttpResponseCode($httpResponseCode);
 		$this->_data = $data;
 		$this->_errorCode = $errorCode;
 		$this->_errorMessage = $errorMessage;
@@ -79,6 +79,7 @@ class Response implements \JsonSerializable{
 	public const HTTP_NOT_PERMITTED = 403;
 	public const HTTP_NOT_FOUND = 404;
 	public const HTTP_TIMEOUT = 408;
+	public const HTTP_TEA_POT = 418;
 	public const HTTP_RATE_LIMIT = 429;
 	public const HTTP_INTERNAL_ERROR = 500;
 	public const HTTP_BAD_GATEWAY = 502;

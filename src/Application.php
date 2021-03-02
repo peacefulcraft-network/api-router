@@ -50,6 +50,20 @@ class Application {
 			$this->_request->setBody($this->_parseRequestBody());
 
 			// Middleware / body transformations
+			foreach($this->_request->getMiddleware() as $middlewareFunction) {
+				$func = new ($middlewareFunction);
+
+				// Middleware must explicity allow request to continue
+				if ($func->run($this->_request, $this->_response)) {
+					continue;
+				
+				// Otherwise, stop processing and write out
+				} else {
+					echo $this->_response;
+					ob_flush();
+					exit();
+				}
+			}
 
 			// Replace handler string with handler object
 			$this->_request->setMatchedHandler(new ($this->_request->getMatchedHandler()));

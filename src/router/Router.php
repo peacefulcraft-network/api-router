@@ -22,18 +22,18 @@ class Router {
 	 * @param route The route to register the callable to
 	 * @param handler The RouteHandler that would handle the request
 	 */
-	public function registerRoute(int $method, string $route, string $handler):void {
+	public function registerRoute(int $method, string $route, array $middleware, string $handler):void {
 		$path = explode('/', $route);
 		// Shift off the empty string from a leading forward slash
 		if(count($path) > 0 && !Validator::meaningfullyExists($path[0])) {
 			array_shift($path);
 		}
 
-		$this->_registerRoute($path, $this->_routes[$method], $handler);
+		$this->_registerRoute($path, $this->_routes[$method], $middleware, $handler);
 
 		// All routes need to have an OPTIONS route as well. If the call didn't already register one, do it automatically for them.
 		if ($method !== RequestMethod::OPTIONS && $method !== RequestMethod::OTHER) {
-			$this->_registerRoute($path, $this->_routes[RequestMethod::OPTIONS], $handler);
+			$this->_registerRoute($path, $this->_routes[RequestMethod::OPTIONS], $middleware, $handler);
 		}
 	}
 
@@ -51,19 +51,20 @@ class Router {
 	 *     ...
 	 * ]
 	 */
-	private function _registerRoute(array &$path, array &$route, string $handler):void {
+	private function _registerRoute(array &$path, array &$route, $middleware, string $handler):void {
 		$level = strtolower(array_shift($path));
 		if (count($path) === 0) {
 			if (isset($route['branch'][$level])) {
 				$route['branch'][$level]['controller'] = $handler;
+				$route['branch'][$level]['middleware'] = $middleware;
 			} else {
-				$route['branch'][$level] = ['controller'=> $handler];
+				$route['branch'][$level] = ['controller'=> $handler, 'middleware'=>$middleware];
 			}
 		} else {
 			if (!isset($route['branch'][$level])) {
 				$route['branch'][$level] = ['branch'=> []];
 			}
-			$this->_registerRoute($path, $route['branch'][$level], $handler);
+			$this->_registerRoute($path, $route['branch'][$level], $middleware, $handler);
 		}
 	}
 
@@ -107,6 +108,7 @@ class Router {
 		}
 
 		$request->setUriParameters($this->_resolveDynamicPathSegments($match['path'], $preservedCaseUri));
+		$request->setMiddleware($match['middleware']);
 		$request->setMatchedHandler($match['controller']);
 		$request->setHasMatchedHandler(true);
 		return $request;
@@ -132,6 +134,7 @@ class Router {
 			// If there is no more path to check, see if there is a controller here
 			if (count($paths) === 0) {
 				if (isset($routes['branch'][$level]['controller'])) {
+					$results['middleware'] = $routes['branch'][$level]['middleware'];
 					$results['controller'] = $routes['branch'][$level]['controller'];
 					$results['path'] .= '/' . $level;
 					return $results;
@@ -163,12 +166,20 @@ class Router {
 				if (count($paths) === 0) {
 					// Check for a controller at this level
 					if (isset($branch['controller'])) {
-						array_push($branches, ['param_count' => $results['param_count'] + 1, 'controller'=> $branch['controller'], 'path'=> $results['path'] . '/' . $pathSeg]);
+						array_push($branches, [
+							'param_count' => $results['param_count'] + 1, 
+							'controller'=> $branch['controller'], 
+							'middleware'=> $branch['middleware'],
+							'path'=> $results['path'] . '/' . $pathSeg
+						]);
 					}
 				// Else, there is more path and we keep going
 				} else {
 					if (isset($branch['branch'])) {
-						$branchResult = ['param_count' => $results['param_count'] + 1, 'path' => $results['path'] . '/' . $pathSeg];
+						$branchResult = [
+							'param_count' => $results['param_count'] + 1,
+							'path' => $results['path'] . '/' . $pathSeg
+						];
 						array_push($branches, $this->_matchRoute($pathsCopy, $branch, $branchResult));
 					}
 				}
@@ -205,6 +216,7 @@ class Router {
 
 			$results['param_count'] += $fewestParams['param_count'];
 			$results['path'] = $fewestParams['path'];
+			$results['middleware'] = $fewestParams['middleware'];
 			$results['controller'] = $fewestParams['controller'];
 			return $results;
 		}

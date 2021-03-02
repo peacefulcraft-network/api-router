@@ -15,6 +15,7 @@ class BasicHTTPApplicationTest extends ControllerTest{
         $expected = json_encode($expected);
 
         $this->assertEquals(curl_errno($curl), 0);
+        $this->assertEquals(200, curl_getinfo($curl, CURLINFO_HTTP_CODE));
         $this->assertEquals($expected, $result);
 
         curl_close($curl);
@@ -31,6 +32,7 @@ class BasicHTTPApplicationTest extends ControllerTest{
         $expected = json_encode($expected);
 
         $this->assertEquals(curl_errno($curl), 0);
+        $this->assertEquals(404, curl_getinfo($curl, CURLINFO_HTTP_CODE));
         $this->assertEquals($expected, $result);
         curl_close($curl);
     }
