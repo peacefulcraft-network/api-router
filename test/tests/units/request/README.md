@@ -1,0 +1,2 @@
+# HTTP Method Tests
+These test are for testing request parsing and routing. These inherently test the basics of the view/controller system, but only in the most minimal sense. Tests are grouped by the route which they are registered under. IE; testing that the router properly parses URL parameters and request body for an HTTP post test goes in `HTTPPostTest.php` because the coresponding controller for this test is registered as a POST route.

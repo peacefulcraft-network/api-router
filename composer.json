@@ -33,7 +33,11 @@
             "Composer\\Config::disableProcessTimeout",
             "/usr/local/bin/okteto down -f okteto.yml"
         ],
-        "test": [
+        "test:install-dependecies": [
+            "Composer\\Config::disableProcessTimeout",
+            "composer --working-dir=test/ install"
+        ],
+        "test:run": [
             "Composer\\Config::disableProcessTimeout",
             "test/scripts/run-tests.sh"
         ]

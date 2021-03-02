@@ -1,6 +1,6 @@
 {
   "editor.insertSpaces": false,
-  "editor.tabSize": 2,
+  "editor.tabSize": 4,
   "remote.SSH.defaultForwardedPorts": [{
     "localPort": 8081,
     "remotePort": 8081,
