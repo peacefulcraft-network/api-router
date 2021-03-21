@@ -34,7 +34,9 @@ publish:
     URL: "$CI_SERVER_PROTOCOL://$CI_SERVER_HOST:$CI_SERVER_PORT/api/v4/projects/$CI_PROJECT_ID/packages/composer?job_token=$CI_JOB_TOKEN"
   script:
     - insecure=$([ "$CI_SERVER_PROTOCOL" = "http" ] && echo "--insecure" || echo "")
+    - echo $URL
     - response=$(curl -s -w "\n%{http_code}" $insecure --data tag=${CI_COMMIT_TAG} $URL)
+    - echo $response
     - code=$(echo "$response" | tail -n 1)
     - body=$(echo "$response" | head -n 1)
     # Output state information
