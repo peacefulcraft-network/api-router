@@ -10,5 +10,6 @@ trait StandardPatch {
 
 	public function options(array $config, Request $request, Response $response): void {
 		$this->setCORSHeaders($request, $response, 'PATCH');
+		$response->setHttpResponseCode(Response::HTTP_OK);
 	}
 }

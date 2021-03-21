@@ -10,7 +10,7 @@ class HTTPGetEcho implements RequestHandler {
 	use StandardCORS;
 
 	public function options(array $config, Request $request, Response $response): void {
-		$this->setCORSHeaders($request, $response, 'GET, DELETE');
+		$this->setCORSHeaders($request, $response, 'OPTIONS, GET, DELETE');
 	}
 
 	public function handle(array $config, Request $request, Response $response): void {
