@@ -1,7 +1,7 @@
 <?php
-namespace ncsa\phpmvj\console;
+namespace ncsa\phpmcj\console;
 
-use \ncsa\phpmvj\util\Validator;
+use \ncsa\phpmcj\util\Validator;
 /**
  * Interactive console
  * Text styling credit: https://gist.github.com/sallar/5257396
@@ -74,7 +74,7 @@ class Console {
 		$classes = get_declared_classes();
 		foreach($classes as $class) {
 			$meta = new \ReflectionClass($class);
-			if ($meta->implementsInterface('\\ncsa\\phpmvj\\console\\Directive')) {
+			if ($meta->implementsInterface('\\ncsa\\phpmcj\\console\\Directive')) {
 				$directive = new $class;
 				$this->_active_directives[$directive->getName()] = $directive;
 			}

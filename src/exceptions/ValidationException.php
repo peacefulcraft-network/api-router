@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmvj\exceptions;
+namespace ncsa\phpmcj\exceptions;
 
 use Exception;
 

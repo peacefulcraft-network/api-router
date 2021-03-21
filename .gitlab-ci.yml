@@ -24,7 +24,7 @@ test:
   script:
     - test/scripts/run-tests.sh
 
-# Only used in php-mvj-release
+# Only used in php-mcj-release
 publish:
   image: curlimages/curl:latest
   stage: publish

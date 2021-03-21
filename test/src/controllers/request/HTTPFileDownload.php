@@ -1,12 +1,12 @@
 <?php
-namespace ncsa\phpmvj\test\controllers\request;
+namespace ncsa\phpmcj\test\controllers\request;
 
-use ncsa\phpmvj\Application;
-use ncsa\phpmvj\router\Request;
-use ncsa\phpmvj\router\RequestHandler;
-use ncsa\phpmvj\router\Response;
-use ncsa\phpmvj\util\cors\StandardGet;
-use ncsa\phpmvj\util\files\DownloadFileByPath;
+use ncsa\phpmcj\Application;
+use ncsa\phpmcj\router\Request;
+use ncsa\phpmcj\router\RequestHandler;
+use ncsa\phpmcj\router\Response;
+use ncsa\phpmcj\util\cors\StandardGet;
+use ncsa\phpmcj\util\files\DownloadFileByPath;
 
 class HTTPFileDownload implements RequestHandler {
 	use StandardGet, DownloadFileByPath;

@@ -1,10 +1,10 @@
 <?php
 
-use ncsa\phpmvj\router\Response;
+use ncsa\phpmcj\router\Response;
 
 class HTTPOptionsTest extends ControllerTest {
 	public function testApplicationShouldReturnCORSHeadersFromImplicitlyDefinedCORSRoute() {
-		$this->markTestSkipped("Like-path CORS handling controller collision https://gitlab.ncsa.tech/dev-team/php-mvj/-/issues/7");
+		$this->markTestSkipped("Like-path CORS handling controller collision https://gitlab.ncsa.tech/dev-team/php-mcj/-/issues/7");
 
 		global $config;
 		$curl = curl_init();

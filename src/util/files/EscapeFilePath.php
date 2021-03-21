@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmvj\util\files;
+namespace ncsa\phpmcj\util\files;
 
 trait EscapeFilePath {
 	/**

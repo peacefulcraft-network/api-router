@@ -1,7 +1,7 @@
 <?php
-namespace ncsa\phpmvj\router;
+namespace ncsa\phpmcj\router;
 
-use ncsa\phpmvj\enum\Enum;
+use ncsa\phpmcj\enum\Enum;
 
 class RequestMethod extends Enum {
 	const OTHER = 1;

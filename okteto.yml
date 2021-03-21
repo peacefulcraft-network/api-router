@@ -1,4 +1,4 @@
-name: php-mvj-bash
+name: php-mcj-bash
 namespace: $HOSTNAME
 image: containerhub.ncsa.tech:5000/php:8.0-cli
 workdir: /usr/src/myapp

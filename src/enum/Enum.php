@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmvj\enum;
+namespace ncsa\phpmcj\enum;
 
 use ReflectionClass;
 use RuntimeException;

@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmvj\util;
+namespace ncsa\phpmcj\util;
 
 use RuntimeException;
 

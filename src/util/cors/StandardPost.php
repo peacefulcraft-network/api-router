@@ -1,8 +1,8 @@
 <?php
-namespace ncsa\phpmvj\util\cors;
+namespace ncsa\phpmcj\util\cors;
 
-use ncsa\phpmvj\router\Request;
-use ncsa\phpmvj\router\Response;
+use ncsa\phpmcj\router\Request;
+use ncsa\phpmcj\router\Response;
 
 trait StandardPost {
 	use StandardCORS;

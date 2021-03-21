@@ -2,7 +2,7 @@
 ob_start();
 require(__DIR__ . '/../../vendor/autoload.php');
 
-use \ncsa\phpmvj\Application;
+use \ncsa\phpmcj\Application;
 require(__DIR__ . '/../config/config.test.php');
 
 $Application = new Application($config);

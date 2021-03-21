@@ -1,10 +1,10 @@
 <?php
-namespace ncsa\phpmvj\test\controllers\request;
+namespace ncsa\phpmcj\test\controllers\request;
 
-use ncsa\phpmvj\router\Request;
-use ncsa\phpmvj\router\RequestHandler;
-use ncsa\phpmvj\router\Response;
-use ncsa\phpmvj\util\cors\StandardCORS;
+use ncsa\phpmcj\router\Request;
+use ncsa\phpmcj\router\RequestHandler;
+use ncsa\phpmcj\router\Response;
+use ncsa\phpmcj\util\cors\StandardCORS;
 
 class HTTPPostEcho implements RequestHandler {
 	use StandardCORS;

@@ -1,8 +1,8 @@
 <?php
-namespace ncsa\phpmvj\util\files;
+namespace ncsa\phpmcj\util\files;
 
-use ncsa\phpmvj\Application;
-use ncsa\phpmvj\router\Response;
+use ncsa\phpmcj\Application;
+use ncsa\phpmcj\router\Response;
 use RuntimeException;
 
 trait DownloadFileByPath {

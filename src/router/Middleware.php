@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmvj\router;
+namespace ncsa\phpmcj\router;
 
 interface Middleware {
 

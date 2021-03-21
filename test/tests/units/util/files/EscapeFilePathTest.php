@@ -1,6 +1,6 @@
 <?php
 
-use ncsa\phpmvj\util\files\EscapeFilePath;
+use ncsa\phpmcj\util\files\EscapeFilePath;
 use PHPUnit\Framework\TestCase;
 
 class EscapeFilePathTest extends TestCase {

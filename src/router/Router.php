@@ -1,7 +1,7 @@
 <?php
-namespace ncsa\phpmvj\router;
+namespace ncsa\phpmcj\router;
 
-use ncsa\phpmvj\util\Validator;
+use ncsa\phpmcj\util\Validator;
 
 class Router {
 	private $_routes = [

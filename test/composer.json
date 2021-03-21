@@ -1,7 +1,7 @@
 {
-	"name": "ncsa/php-mvj-testing",
+	"name": "ncsa/php-mcj-testing",
 	"version": "dev-master",
-	"description": "An implementation of php-mvj for development and unit testing",
+	"description": "An implementation of php-mcj for development and unit testing",
 	"authors": [
 		{
 				"name": "NCSA Dev-Team",
@@ -10,7 +10,7 @@
 	],
 	"autoload":{
 			"psr-4":{
-					"ncsa\\phpmvj\\test\\":"src/"
+					"ncsa\\phpmcj\\test\\":"src/"
 			}
 	},
 	"repositories": [
@@ -24,7 +24,7 @@
 		"php": ">=7.4",
 		"ext-mbstring": "*",
 		"ext-openssl": "*",
-		"ncsa/php-mvj": "*",
+		"ncsa/php-mcj": "*",
 		"phpunit/phpunit": "^9",
 		"symfony/process": "^5"
 	}

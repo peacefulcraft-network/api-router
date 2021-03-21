@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmvj\console;
+namespace ncsa\phpmcj\console;
 
 interface Directive {
   public function getName(): string;

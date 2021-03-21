@@ -1,10 +1,10 @@
 <?php
-namespace ncsa\phpmvj\router;
+namespace ncsa\phpmcj\router;
 
 class Request {
 
 	/**
-	 * Coresponds to an \ncsa\phpmvj\router\RequestMethod constant
+	 * Coresponds to an \ncsa\phpmcj\router\RequestMethod constant
 	 */
 	private int $_request_method = -1;
 		public function getEMethod():int { return $this->_request_method; }

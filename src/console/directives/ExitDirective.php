@@ -1,8 +1,8 @@
 <?php
-namespace ncsa\phpmvj\console\directives;
+namespace ncsa\phpmcj\console\directives;
 
-use \ncsa\phpmvj\console\Console;
-use \ncsa\phpmvj\console\Directive;
+use \ncsa\phpmcj\console\Console;
+use \ncsa\phpmcj\console\Directive;
 
 class ExitDirective implements Directive {
 	public function getName():string { return "exit"; }

@@ -1,10 +1,10 @@
 <?php
-namespace ncsa\phpmvj\router;
+namespace ncsa\phpmcj\router;
 
 interface RequestHandler {
     /**
      * Responds to HTTP/OPTIONS (CORS) requests by setting the Access-Control-*
-     * headers appriopriatly. See \ncsa\phpmvj\util for traits for common header
+     * headers appriopriatly. See \ncsa\phpmcj\util for traits for common header
      * configurations.
      * For more information on CORS and HTTP/OPTIONS, see
      * https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS

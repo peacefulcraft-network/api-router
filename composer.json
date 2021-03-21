@@ -1,5 +1,5 @@
 {
-    "name": "ncsa/php-mvj",
+    "name": "ncsa/php-mcj",
     "version": "1.0.0",
     "description": "A PHP MVJ[son] framework for building RESTful APIs",
     "type": "library",
@@ -11,7 +11,7 @@
     ],
     "autoload":{
         "psr-4":{
-            "ncsa\\phpmvj\\":"src/"
+            "ncsa\\phpmcj\\":"src/"
         }
     },
     "archive": {

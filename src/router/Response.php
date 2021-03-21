@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmvj\router;
+namespace ncsa\phpmcj\router;
 
 class Response implements \JsonSerializable{
 	private $_isRaw;

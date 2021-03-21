@@ -1,10 +1,10 @@
 <?php
-namespace ncsa\phpmvj\test\controllers;
+namespace ncsa\phpmcj\test\controllers;
 
-use ncsa\phpmvj\router\Request;
-use ncsa\phpmvj\router\RequestHandler;
-use ncsa\phpmvj\router\Response;
-use ncsa\phpmvj\util\cors\StandardGet;
+use ncsa\phpmcj\router\Request;
+use ncsa\phpmcj\router\RequestHandler;
+use ncsa\phpmcj\router\Response;
+use ncsa\phpmcj\util\cors\StandardGet;
 
 class Index implements RequestHandler {
 	use StandardGet;

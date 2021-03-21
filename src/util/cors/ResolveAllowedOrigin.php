@@ -1,7 +1,7 @@
 <?php
-namespace ncsa\phpmvj\util\cors;
+namespace ncsa\phpmcj\util\cors;
 
-use ncsa\phpmvj\exceptions\InvalidConfigurationException;
+use ncsa\phpmcj\exceptions\InvalidConfigurationException;
 
 trait ResolveAllowedOrigin {
 	/**

@@ -1,7 +1,7 @@
 <?php
-namespace ncsa\phpmvj;
+namespace ncsa\phpmcj;
 
-use \ncsa\phpmvj\console\Console;
+use \ncsa\phpmcj\console\Console;
 
 class ConsoleApplication {
 

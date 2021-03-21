@@ -1,7 +1,7 @@
 <?php
 
-use ncsa\phpmvj\router\RequestMethod;
-use ncsa\phpmvj\router\Router;
+use ncsa\phpmcj\router\RequestMethod;
+use ncsa\phpmcj\router\Router;
 use PHPUnit\Framework\TestCase;
 
 class RouterRoutingTest extends TestCase {

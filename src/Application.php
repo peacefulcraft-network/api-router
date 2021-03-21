@@ -1,10 +1,10 @@
 <?php
-namespace ncsa\phpmvj;
+namespace ncsa\phpmcj;
 
-use ncsa\phpmvj\router\Request;
-use ncsa\phpmvj\router\RequestMethod;
-use ncsa\phpmvj\router\Response;
-use \ncsa\phpmvj\router\Router;
+use ncsa\phpmcj\router\Request;
+use ncsa\phpmcj\router\RequestMethod;
+use ncsa\phpmcj\router\Response;
+use \ncsa\phpmcj\router\Router;
 
 class Application {
 

@@ -1,6 +1,6 @@
 <?php
 
-use ncsa\phpmvj\router\Response;
+use ncsa\phpmcj\router\Response;
 
 class MiddlewareTest extends ControllerTest {
 
