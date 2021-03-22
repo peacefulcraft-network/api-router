@@ -11,7 +11,6 @@ $router->registerRoute(RequestMethod::DELETE, 'echo', [], '\ncsa\phpmcj\test\con
 $router->registerRoute(RequestMethod::POST, 'echo', [], '\ncsa\phpmcj\test\controllers\request\HTTPPostEcho');
 $router->registerRoute(RequestMethod::PATCH, 'echo', [],  '\ncsa\phpmcj\test\controllers\request\HTTPPostEcho');
 $router->registerRoute(RequestMethod::PUT, 'echo', [], '\ncsa\phpmcj\test\controllers\request\HTTPPostEcho');
-$router->registerRoute(RequestMethod::OPTIONS, 'options', [], '\ncsa\phpmcj\test\controllers\request\HTTPOptions');
 $router->registerRoute(RequestMethod::POST, 'file-upload', [], '\ncsa\phpmcj\test\controllers\request\HTTPFileUpload');
 $router->registerRoute(RequestMethod::GET, 'file-download/:filename', [], '\ncsa\phpmcj\test\controllers\request\HTTPFileDownload');
 

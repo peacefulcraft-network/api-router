@@ -11,7 +11,6 @@ class Router {
 		RequestMethod::PATCH=>[],
 		RequestMethod::POST=>[],
 		RequestMethod::PUT=>[],
-		RequestMethod::OPTIONS=>[],
 	];
 		public function getRoutes():array { return $this->_routes; }
 
@@ -32,12 +31,6 @@ class Router {
 		// Copy path because _registerRoute takes a pointer and will modify the value it is given. We want to keep the orignal value
 		$pathCopy = $path;
 		$this->_registerRoute($pathCopy, $this->_routes[$method], $middleware, $handler);
-
-		// All routes need to have an OPTIONS route as well. If the call didn't already register one, do it automatically for them.
-		if ($method !== RequestMethod::OPTIONS && $method !== RequestMethod::OTHER) {
-			$pathCopy = $path;
-			$this->_registerRoute($pathCopy, $this->_routes[RequestMethod::OPTIONS], $middleware, $handler);
-		}
 	}
 
 	/**

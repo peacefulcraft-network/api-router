@@ -4,6 +4,8 @@ use ncsa\phpmcj\router\Response;
 
 class HTTPOptionsTest extends ControllerTest {
 	public function testApplicationShouldReturnCORSHeadersFromImplicitlyDefinedCORSRoute() {
+		$this->markTestSkipped("CORS rework");
+		return;
 		$this->markTestSkipped("Like-path CORS handling controller collision https://gitlab.ncsa.tech/dev-team/php-mcj/-/issues/7");
 
 		global $config;
@@ -36,6 +38,8 @@ class HTTPOptionsTest extends ControllerTest {
 	}
 
 	public function testApplicationShouldReturnCORSHeadersWhenGivenACORSRouteExplicitly() {
+		$this->markTestSkipped("CORS rework");
+		return;
 		global $config;
 		$curl = curl_init();
 

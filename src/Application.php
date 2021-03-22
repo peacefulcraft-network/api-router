@@ -30,22 +30,7 @@ class Application {
 	public function handle() {
 		$this->_request = $this->_router->resolve($_SERVER['REQUEST_URI']);
 
-		if ($this->_request->hasMatchedHandler()) {
-			
-			// CORS pre-flight requests
-			if ($this->_request->getEMethod() === RequestMethod::OPTIONS) {
-				// Replace handler string with handler object
-				$this->_request->setMatchedHandler(new ($this->_request->getMatchedHandler()));
-				
-				$this->_request->getMatchedHandler()->options($this->_config, $this->_request, $this->_response);
-				$this->_response->setHeader('Access-Control-Allow-Credentials', true);
-				$this->_response->setHeader('Access-Control-Max-Age', $this->_config['cors']['max-age']);
-
-				// Pre-flight requests end here
-				ob_flush();
-				return;
-			}
-			
+		if ($this->_request->hasMatchedHandler()) {		
 			// Parse request body
 			$this->_request->setBody($this->_parseRequestBody());
 
@@ -67,9 +52,6 @@ class Application {
 
 			// Replace handler string with handler object
 			$this->_request->setMatchedHandler(new ($this->_request->getMatchedHandler()));
-
-			// Send the CORS headers
-			$this->_request->getMatchedHandler()->options($this->_config, $this->_request, $this->_response);
 
 			// Actually handle the request
 			$this->_request->getMatchedHandler()->handle($this->_config, $this->_request, $this->_response);

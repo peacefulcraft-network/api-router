@@ -11,5 +11,6 @@ class HTTPFileUpload implements RequestHandler {
 
 	public function handle(array $config, Request $request, Response $response): void {
 		$response->setData($_FILES['file_contents']);
+		$response->setHttpResponseCode(Response::HTTP_OK);
 	}
 }

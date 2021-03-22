@@ -10,5 +10,4 @@ class RequestMethod extends Enum {
 	const PATCH = 4;
 	const POST = 5;
 	const PUT = 6;
-	const OPTIONS = 7;
 }

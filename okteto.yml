@@ -1,6 +1,7 @@
 name: php-mcj-bash
 namespace: $HOSTNAME
 image: containerhub.ncsa.tech:5000/php:8.0-cli
+autocreate: true
 workdir: /usr/src/myapp
 command: ["scripts/start-dev-server.sh"]
 sync:
