@@ -1,7 +1,7 @@
 {
     "name": "pcn/api-router",
     "version": "1.0.0",
-    "description": "A PHP MVJ[son] framework for building RESTful APIs",
+    "description": "A PHP framework for building RESTful APIs",
     "type": "library",
     "authors": [
         {
@@ -22,22 +22,13 @@
         "php": ">=8.0"
     },
     "scripts": {
-        "kube-dev:start": [
-            "Composer\\Config::disableProcessTimeout",
-            "/usr/local/bin/okteto up -f okteto.yml",
-            "/usr/local/bin/okteto down -f okteto.yml"
-        ],
-        "kube-dev:stop": [
-            "Composer\\Config::disableProcessTimeout",
-            "/usr/local/bin/okteto down -f okteto.yml"
-        ],
         "test:install-dependencies": [
             "Composer\\Config::disableProcessTimeout",
             "composer --working-dir=test/ install"
         ],
         "test:run": [
             "Composer\\Config::disableProcessTimeout",
-            "test/scripts/run-tests.sh"
+            "php test/vendor/bin/phpunit test/tests/units --bootstrap test/tests/bootstrap.php"
         ]
     }
 }
