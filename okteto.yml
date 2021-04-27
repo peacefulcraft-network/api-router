@@ -1,9 +1,9 @@
 name: php-mcj-bash
 namespace: $HOSTNAME
-image: containerhub.ncsa.tech:5000/php:8.0-cli
+image: containerhub.ncsa.tech:5000/php:8.0-cli-alpine
 autocreate: true
 workdir: /usr/src/myapp
-command: ["scripts/start-dev-server.sh"]
+command: ["sh", "scripts/start-dev-server.sh"]
 sync:
   - .:/usr/src/myapp
 forward:

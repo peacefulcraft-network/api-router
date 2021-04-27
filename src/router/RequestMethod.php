@@ -4,10 +4,10 @@ namespace ncsa\phpmcj\router;
 use ncsa\phpmcj\enum\Enum;
 
 class RequestMethod extends Enum {
-	const OTHER = 1;
-	const DELETE = 2;
-	const GET = 3;
-	const PATCH = 4;
-	const POST = 5;
-	const PUT = 6;
+	const OTHER = "other";
+	const DELETE = "delete";
+	const GET = "get";
+	const PATCH = "patch";
+	const POST = "post";
+	const PUT = "put";
 }

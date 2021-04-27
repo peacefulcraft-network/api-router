@@ -1,79 +1,74 @@
 <?php
 namespace ncsa\phpmcj\router;
 
-use ncsa\phpmcj\util\Validator;
-
 class Router {
-	private $_routes = [
-		RequestMethod::OTHER=>[],
-		RequestMethod::DELETE=>[],
-		RequestMethod::GET=>[],
-		RequestMethod::PATCH=>[],
-		RequestMethod::POST=>[],
-		RequestMethod::PUT=>[],
-	];
-		public function getRoutes():array { return $this->_routes; }
+	private RoutingTreeNode $_routes;
 
-	public function __construct(){}
+	public function __construct() {
+		$this->_routes = new RoutingTreeNode(false, '');
+	}
 
 	/**
-	 * @param method A RequestMethod:: constant
-	 * @param route The route to register the callable to
-	 * @param handler The RouteHandler that would handle the request
+	 * Register a route under the given method, at the given path, with the given middleware, served by the given controller
 	 */
-	public function registerRoute(int $method, string $route, array $middleware, string $handler):void {
-		$path = explode('/', $route);
-		// Shift off the empty string from a leading forward slash
-		if(count($path) > 0 && !Validator::meaningfullyExists($path[0])) {
+	public function registerRoute(RequestMethod|string $method, string $path, ?array $middleware, string $handler) {
+		// unpack enum
+		if ($method instanceof $method) {
+			$method = $method->_value;
+		}
+
+		if (array_key_exists($method, $this->_routes->getChildren())) {
+			$parent = $this->_routes->getChildren()[$method];
+		} else {
+			$parent = new RoutingTreeNode(false, $method);
+			$this->_routes->addChild($parent);
+		}
+
+		// Shift off empty string from leading forward-slash for consistency, unless this is the path '/' or ''
+		$path = explode('/', $path);
+		if (count($path) > 1 && $path[0] === '') {
 			array_shift($path);
 		}
 
-		// Copy path because _registerRoute takes a pointer and will modify the value it is given. We want to keep the orignal value
-		$pathCopy = $path;
-		$this->_registerRoute($pathCopy, $this->_routes[$method], $middleware, $handler);
+		$this->_registerRoute($parent, $path, $middleware, $handler);
 	}
-
-	/**
-	 * Recursivley builds out an associate array of routes broken up heirarchicaly by their path,
-	 * to fully qualified RouteHandler's classpaths that would handle requests to that url.
-	 * IE
-	 * [
-	 *    'branch' => [
-	 *        'index' => [
-	 *           'controller' => '\ncsa\insights\controllers\index\home',
-	 *           'branch' => []
-	 *        ],
-	 *     ],
-	 *     ...
-	 * ]
-	 */
-	private function _registerRoute(array &$path, array &$route, $middleware, string $handler):void {
-		$level = strtolower(array_shift($path));
+	private function _registerRoute(RoutingTreeNode $parent, array &$path, ?array $middleware, string $handler): void {
+		// If no more path, the current level is where this handler should reside
 		if (count($path) === 0) {
-			if (isset($route['branch'][$level])) {
-				$route['branch'][$level]['controller'] = $handler;
-				$route['branch'][$level]['middleware'] = $middleware;
-			} else {
-				$route['branch'][$level] = ['controller'=> $handler, 'middleware'=>$middleware];
-			}
+			$parent->setMiddleware($middleware);
+			$parent->setControllerNS($handler);
+
+		// More path; we must go deeper
 		} else {
-			if (!isset($route['branch'][$level])) {
-				$route['branch'][$level] = ['branch'=> []];
+			$segment = strtolower(array_shift($path));
+			$type = (strpos($segment, ':', 0) === 0)? 'Parameter' : '';
+			$num_assumptions = ($type === 'Parameter')? $parent->numAssumptionsRequired() + 1 : $parent->numAssumptionsRequired();
+
+			// getChildren(): array || getParameterChildren(): array
+			$target = $parent->{"get{$type}Children"}();
+			if (array_key_exists($segment, $target)) {
+				$child = $target[$segment];
+			} else {
+				$child = new RoutingTreeNode((bool)$type, $segment, $num_assumptions);
+				// addChild() || addParameterChild()
+				$parent->{"add{$type}Child"}($child);
 			}
-			$this->_registerRoute($path, $route['branch'][$level], $middleware, $handler);
+
+			$this->_registerRoute($child, $path, $middleware, $handler);
 		}
 	}
 
 	/**
-	 * Resolve the request URI to a RequestHandler
+	 * Resolve the given URI into a Request with populated URI parameters, registered middleware,
+	 * and the controller responsible for this route, assuming a route has been registred which matches the $URI 
 	 */
-	public function resolve($uri):Request {
-		$request = new Request($uri);
+	public function resolve(string $uri) : Request {
+		$Request = new Request($uri);
 		$is_web_request = isset($_SERVER['REQUEST_METHOD']) && strlen($_SERVER['REQUEST_METHOD']) > 0;
 		if ($is_web_request) {
-			$request->setEMethod(RequestMethod::valueOf($_SERVER['REQUEST_METHOD']));
+			$Request->setEMethod(new RequestMethod(strtolower($_SERVER['REQUEST_METHOD'])));
 		} else {
-			$request->setEMethod(RequestMethod::OTHER);
+			$Request->setEMethod(new RequestMethod(RequestMethod::OTHER));
 		}
 
 		$queryStartPos = strpos($uri, '?');
@@ -83,168 +78,75 @@ class Router {
 			$uri = strtolower($preservedCaseUri);
 		}
 
-		$path = explode('/', $uri);
-		
-		// Shift off the empty string from a leading forward slash
-		if(count($path) > 0 && !Validator::meaningfullyExists($path[0])) {
+		if (array_key_exists($Request->getEMethod()->_value, $this->_routes->getChildren())) {
+			$path = explode('/', $uri);
 			array_shift($path);
+			$match = $this->_resolveRoute($path, $this->_routes->getChildren()[$Request->getEMethod()->_value]);
+
+			// Return if no matched route
+			if ($match === null) {
+				return $Request;
+			}
+
+			// set uri parameters
+			$preservedCasePath = explode('/', $preservedCaseUri);
+			$Request->setUriParameters($this->_resolveParameterSegments($match, $preservedCasePath));
+			$Request->setMiddleware($match->getMiddleware());
+			$Request->setMatchedHandler($match->getControllerNS());
 		}
 
-		// Recusivley traverse router tree to resolve the requested URI
-		$branchResults = ['param_count' => 0, 'controller' => null, 'path' => ''];
-		if (isset($this->_routes[$request->getEMethod()])) {
-			$match = $this->_matchRoute($path, $this->_routes[$request->getEMethod()], $branchResults);
+		return $Request;
+	}
+	private function _resolveRoute(array &$path, RoutingTreeNode $parent): ?RoutingTreeNode {
+		$segment = array_shift($path);
+		if ($segment === null) {
+			if ($parent->getControllerNS() === null) {
+				return null;
+			}
+			return $parent;
+		}
+
+		$static_options = $parent->getChildren();
+		// Prefer a static segment match
+		if (array_key_exists($segment, $static_options)) {
+			return $this->_resolveRoute($path, $static_options[$segment]);
+
+		// If no static segment match, consider all parameters paths
 		} else {
-			$match = null;
-		}
-		
-		if ($match  === null) {
-			// Return with no matched handler
-			return $request;
-		}
-
-		$request->setUriParameters($this->_resolveDynamicPathSegments($match['path'], $preservedCaseUri));
-		$request->setMiddleware($match['middleware']);
-		$request->setMatchedHandler($match['controller']);
-		$request->setHasMatchedHandler(true);
-		return $request;
-	}
-	
-	/**
-	 * Recursevly traverse the $routes associative array to determine the request handler
-	 * for the given request $path, broken up by '/'s.
-	 * @param path The request URI, explode()d into an array on the '/' characters
-	 * @param routes The route tree or subtree to check for the route
-	 * @return array An array containing the results of the route resolution
-	 * @return void When no route is matched
-	 */
-	private function _matchRoute(array &$paths, array $routes, array &$results):?array {
-		$level = array_shift($paths);
-		if ($level === null) { return null; }
-
-		/*
-			Static route match (no params in url).
-			Exact matches are prefered over those with a dynamic parameter
-		*/
-		if(isset($routes['branch'][$level])) {
-			// If there is no more path to check, see if there is a controller here
-			if (count($paths) === 0) {
-				if (isset($routes['branch'][$level]['controller'])) {
-					$results['middleware'] = $routes['branch'][$level]['middleware'];
-					$results['controller'] = $routes['branch'][$level]['controller'];
-					$results['path'] .= '/' . $level;
-					return $results;
-				} // else, we continue to dynamic path segment checking
-			// Else there is more path, we keep going
-			} else {
-				if (isset($routes['branch'][$level])) {
-					$results['path'] .= '/' . $level;
-					return $this->_matchRoute($paths, $routes['branch'][$level], $results);
-				}
-			}
-		}
-
-		/*
-			Check for dynamic segment (/:variable) 
-		*/
-
-		/*
-			Whenever a dynamic parameter is involved, it creates a posibilty of a 'run-off' between routes.
-			We prefer routes which require fewer assumptions - assuming that a value is a dynamic parameter.
-		*/
-		$branches = [];
-		$pathsCopy = json_decode(json_encode($paths), true);
-		
-		foreach(@$routes['branch'] as $pathSeg => $branch) {
-			// Check if there is a dynamic segment on this branch
-			if (strpos($pathSeg, ':') === 0) {
-				// If there is no more path, this should be our stop
-				if (count($paths) === 0) {
-					// Check for a controller at this level
-					if (isset($branch['controller'])) {
-						array_push($branches, [
-							'param_count' => $results['param_count'] + 1, 
-							'controller'=> $branch['controller'], 
-							'middleware'=> $branch['middleware'],
-							'path'=> $results['path'] . '/' . $pathSeg
-						]);
-					}
-				// Else, there is more path and we keep going
-				} else {
-					if (isset($branch['branch'])) {
-						$branchResult = [
-							'param_count' => $results['param_count'] + 1,
-							'path' => $results['path'] . '/' . $pathSeg
-						];
-						array_push($branches, $this->_matchRoute($pathsCopy, $branch, $branchResult));
-					}
-				}
-			}// Else, this is a branch and has already be ruled out above.
-		}
-
-		/**
-		 * At this point, all recursive calls have returned to this level.
-		 * In the case of multiple branch matches, choose the one with the fewest
-		 * dynamic segments (/:variable).
-		 * 
-		 * IE;
-		 * Is preferred /exact/matching/route
-		 * Over /exact/matching/:untilhere
-		 * when /exact/matching/route is requested.
-		 * 
-		 * IF the requested route was /exact/matching/literally anything else
-		 * the branch /exact/matching/route wouldn't have returned as a possibility,
-		 * leaving /exact/matching/:untilhere as the only plausable route to select.
-		 */
-		if (count($branches) > 0) {
-			$results['param_count']++;
-			$fewestParams = $branches[0];
-			foreach($branches as $branchResult) {
-				if ($branch === null) { continue; }
-
-				if (!isset($branchResult['param_count']) || $branchResult['param_count'] < $fewestParams['param_count']) {
-					$fewestParams = $branchResult;
-				}
+			$parameterized_options = $parent->getParameterChildren();
+			$parameterized_returns = array();
+			foreach($parameterized_options as $child) {
+				$pathCopy = $path;
+				array_push($parameterized_returns, $this->_resolveRoute($pathCopy, $child));
 			}
 
-			// No matching routes were found at this level.
-			if ($fewestParams === null) { return null; }
+			// Choose the parameter route with the fewest assumed parameter segments
+			$route = null;
+			foreach($parameterized_returns as $option) {
+				if ($option === null) { continue; }
+			
+				// If this route requires fewer assumed parameters, prefer it
+				if (
+					$route === null
+					|| $route->numAssumptionsRequired() < $option->numAssumptionsRequired()
+				) { $route = $option; }
+			}
 
-			$results['param_count'] += $fewestParams['param_count'];
-			$results['path'] = $fewestParams['path'];
-			$results['middleware'] = $fewestParams['middleware'];
-			$results['controller'] = $fewestParams['controller'];
-			return $results;
+			return $route;
 		}
-
-		/*
-			No matching routes found at this level.
-		*/
-		return null;
 	}
 
-	/**
-	 * Resolves URI params in the matched route (/:uriparam/noturiparam)
-	 * @param matchedPath The path returned by the router, including dynamic segment indicators
-	 * @param uri The request uri to extra dynamic segments from
-	 */
-	private function _resolveDynamicPathSegments(string $matchedPath, string $uri):array {
-		$requestUriParts = explode('/', $uri);
-		$routeParts = explode('/', $matchedPath);
-
-		// copy-on-write
-		// Gets the query params
-		$uriParams = $_GET;
-
-		// Parse stuff out of the uri if there were dynamic path segments
-		$parts = count($routeParts);
-		for($i=0; $i<$parts; $i++) {
-			if (strpos($routeParts[$i], ":") === 0) {
-				$uriParams[substr($routeParts[$i], 1)] = $requestUriParts[$i];
+	private function _resolveParameterSegments(RoutingTreeNode $leaf, array $path): array {
+		$parameters = $_GET;
+		$i = count($path) - 1;
+		while ($leaf !== null) {
+			if ($leaf->isParamter()) {
+				$parameters[substr($leaf->getSegment(), 1)] = $path[$i];
 			}
+			$i--;
+			$leaf = $leaf->getParent();
 		}
 
-		return $uriParams;
+		return $parameters;
 	}
 }
-?>
