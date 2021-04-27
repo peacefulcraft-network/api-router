@@ -1,0 +1,21 @@
+name: "CI"
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+      - name: Setup test project
+        run: composer --working-dir=test/ require
+
+      - name: Run tests
+        run: cd test/scripts && /bin/sh run-tests.sh

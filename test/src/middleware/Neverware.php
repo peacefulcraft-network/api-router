@@ -1,9 +1,9 @@
 <?php
-namespace ncsa\phpmcj\test\middleware;
+namespace net\peacefulcraft\apirouter\test\middleware;
 
-use ncsa\phpmcj\router\Middleware;
-use ncsa\phpmcj\router\Request;
-use ncsa\phpmcj\router\Response;
+use net\peacefulcraft\apirouter\router\Middleware;
+use net\peacefulcraft\apirouter\router\Request;
+use net\peacefulcraft\apirouter\router\Response;
 
 class Neverware implements Middleware {
 

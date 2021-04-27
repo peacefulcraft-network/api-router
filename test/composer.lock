@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a980f4fec1d52480281ff0c8d6009c85",
+    "content-hash": "e00938d736a42e8ecd57c43086698130",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -135,64 +135,6 @@
             "time": "2020-11-13T09:40:50+00:00"
         },
         {
-            "name": "ncsa/php-mcj",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "..",
-                "reference": "3471f49d2aaa4697ed6293a8ea308e809410dac5"
-            },
-            "archive": {
-                "exclude": [
-                    "/test",
-                    "/scripts",
-                    "/.vscode",
-                    "/okteto.yml",
-                    "/.stignore"
-                ]
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "ext-openssl": "*",
-                "php": ">=7.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ncsa\\phpmcj\\": "src/"
-                }
-            },
-            "scripts": {
-                "kube-dev:start": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "/usr/local/bin/okteto up -f okteto.yml",
-                    "/usr/local/bin/okteto down -f okteto.yml"
-                ],
-                "kube-dev:stop": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "/usr/local/bin/okteto down -f okteto.yml"
-                ],
-                "test:install-dependencies": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "composer --working-dir=test/ install"
-                ],
-                "test:run": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "test/scripts/run-tests.sh"
-                ]
-            },
-            "authors": [
-                {
-                    "name": "NCSA Dev-Team",
-                    "email": "dev-team@ncsa.tech"
-                }
-            ],
-            "description": "A PHP MVJ[son] framework for building RESTful APIs",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
             "name": "nikic/php-parser",
             "version": "v4.10.4",
             "source": {
@@ -247,6 +189,62 @@
                 "source": "https://github.com/nikic/PHP-Parser/tree/v4.10.4"
             },
             "time": "2020-12-20T10:01:03+00:00"
+        },
+        {
+            "name": "pcn/api-router",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "..",
+                "reference": "83e76eea284d9a0a22f49a4729ff060ea08ea194"
+            },
+            "archive": {
+                "exclude": [
+                    "/test",
+                    "/scripts",
+                    "/.vscode",
+                    "/okteto.yml",
+                    "/.stignore"
+                ]
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "net\\peacefulcraft\\apirouter\\": "src/"
+                }
+            },
+            "scripts": {
+                "kube-dev:start": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "/usr/local/bin/okteto up -f okteto.yml",
+                    "/usr/local/bin/okteto down -f okteto.yml"
+                ],
+                "kube-dev:stop": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "/usr/local/bin/okteto down -f okteto.yml"
+                ],
+                "test:install-dependencies": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "composer --working-dir=test/ install"
+                ],
+                "test:run": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "test/scripts/run-tests.sh"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "PeacefulCraft Network",
+                    "email": "support@peacefulcraft.net"
+                }
+            ],
+            "description": "A PHP MVJ[son] framework for building RESTful APIs",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "phar-io/manifest",

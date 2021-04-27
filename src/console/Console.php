@@ -1,7 +1,7 @@
 <?php
-namespace ncsa\phpmcj\console;
+namespace net\peacefulcraft\apirouter\console;
 
-use \ncsa\phpmcj\util\Validator;
+use \net\peacefulcraft\apirouter\util\Validator;
 /**
  * Interactive console
  * Text styling credit: https://gist.github.com/sallar/5257396

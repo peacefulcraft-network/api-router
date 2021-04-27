@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmcj\router;
+namespace net\peacefulcraft\apirouter\router;
 
 class Response implements \JsonSerializable{
 	private $_isRaw;

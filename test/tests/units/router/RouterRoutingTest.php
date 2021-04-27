@@ -1,7 +1,7 @@
 <?php
 
-use ncsa\phpmcj\router\RequestMethod;
-use ncsa\phpmcj\router\Router;
+use net\peacefulcraft\apirouter\router\RequestMethod;
+use net\peacefulcraft\apirouter\router\Router;
 use PHPUnit\Framework\TestCase;
 
 class RouterRoutingTest extends TestCase {

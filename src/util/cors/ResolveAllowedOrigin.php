@@ -1,7 +1,7 @@
 <?php
-namespace ncsa\phpmcj\util\cors;
+namespace net\peacefulcraft\apirouter\util\cors;
 
-use ncsa\phpmcj\exceptions\InvalidConfigurationException;
+use net\peacefulcraft\apirouter\exceptions\InvalidConfigurationException;
 
 trait ResolveAllowedOrigin {
 	/**

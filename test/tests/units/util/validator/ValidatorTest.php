@@ -1,6 +1,6 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use ncsa\phpmcj\util\Validator;
+use net\peacefulcraft\apirouter\util\Validator;
 
 class ValidatorTest extends TestCase {
   public function testMeaningfullyExistsValidatorWithOneValue() {
@@ -19,7 +19,7 @@ class ValidatorTest extends TestCase {
     $this->assertFalse(Validator::meaningfullyExists(null, null, null));
     $this->assertFalse(Validator::meaningfullyExists("  ", ""));
     $this->assertFalse(Validator::meaningfullyExists("", "", "", []));
-	$this->assertFalse(Validator::meaningfullyExists([""], []));
+  	$this->assertFalse(Validator::meaningfullyExists([""], []));
     $this->assertTrue(Validator::meaningfullyExists(["aasdf", "538ios"], ["aasdf", "538ios"]));
     $this->assertFalse(Validator::meaningfullyExists(["aasdf", "538ios"], []));
     $this->assertTrue(Validator::meaningfullyExists(0, 2, -1, [5, 6]));

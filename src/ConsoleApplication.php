@@ -1,7 +1,7 @@
 <?php
-namespace ncsa\phpmcj;
+namespace net\peacefulcraft\apirouter;
 
-use \ncsa\phpmcj\console\Console;
+use \net\peacefulcraft\apirouter\console\Console;
 
 class ConsoleApplication {
 

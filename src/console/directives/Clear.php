@@ -1,8 +1,8 @@
 <?php
-namespace ncsa\phpmcj\console\directives;
+namespace net\peacefulcraft\apirouter\console\directives;
 
-use \ncsa\phpmcj\console\Console;
-use \ncsa\phpmcj\console\Directive;
+use \net\peacefulcraft\apirouter\console\Console;
+use \net\peacefulcraft\apirouter\console\Directive;
 
 class Clear implements Directive {
 	public function getName():string { return "clear"; }

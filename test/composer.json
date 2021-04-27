@@ -1,17 +1,17 @@
 {
-	"name": "ncsa/php-mcj-testing",
+	"name": "pcn/api-router-testing",
 	"version": "dev-master",
 	"description": "An implementation of php-mcj for development and unit testing",
 	"authors": [
 		{
-				"name": "NCSA Dev-Team",
-				"email": "dev-team@ncsa.tech"
+			"name": "PeacefulCraft Network",
+			"email": "support@peacefulcraft.net"
 		}
 	],
 	"autoload":{
-			"psr-4":{
-					"ncsa\\phpmcj\\test\\":"src/"
-			}
+		"psr-4":{
+			"net\\peacefulcraft\\apirouter\\test\\":"src/"
+		}
 	},
 	"repositories": [
 		{
@@ -24,7 +24,7 @@
 		"php": ">=7.4",
 		"ext-mbstring": "*",
 		"ext-openssl": "*",
-		"ncsa/php-mcj": "*",
+		"pcn/api-router": "*",
 		"phpunit/phpunit": "^9",
 		"symfony/process": "^5"
 	}

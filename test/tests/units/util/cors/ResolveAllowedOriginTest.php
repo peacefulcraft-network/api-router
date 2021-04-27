@@ -1,6 +1,6 @@
 <?php
 
-use ncsa\phpmcj\util\cors\ResolveAllowedOrigin;
+use net\peacefulcraft\apirouter\util\cors\ResolveAllowedOrigin;
 use PHPUnit\Framework\TestCase;
 
 class ResolveAllowedOriginTest extends TestCase {

@@ -1,10 +1,10 @@
 <?php
-namespace ncsa\phpmcj\router;
+namespace net\peacefulcraft\apirouter\router;
 
 class Request {
 
 	/**
-	 * Coresponds to an \ncsa\phpmcj\router\RequestMethod constant
+	 * Coresponds to an \net\peacefulcraft\apirouter\router\RequestMethod constant
 	 */
 	private RequestMethod $_request_method;
 		public function getEMethod(): RequestMethod { return $this->_request_method; }

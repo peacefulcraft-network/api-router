@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmcj\util\files;
+namespace net\peacefulcraft\apirouter\util\files;
 
 trait EscapeFilePath {
 	/**

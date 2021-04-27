@@ -1,12 +1,12 @@
 <?php
-namespace ncsa\phpmcj\test\controllers\request;
+namespace net\peacefulcraft\apirouter\test\controllers\request;
 
-use ncsa\phpmcj\Application;
-use ncsa\phpmcj\router\Request;
-use ncsa\phpmcj\router\RequestHandler;
-use ncsa\phpmcj\router\Response;
-use ncsa\phpmcj\util\cors\StandardGet;
-use ncsa\phpmcj\util\files\DownloadFileByPath;
+use net\peacefulcraft\apirouter\Application;
+use net\peacefulcraft\apirouter\router\Request;
+use net\peacefulcraft\apirouter\router\RequestHandler;
+use net\peacefulcraft\apirouter\router\Response;
+use net\peacefulcraft\apirouter\util\cors\StandardGet;
+use net\peacefulcraft\apirouter\util\files\DownloadFileByPath;
 
 class HTTPFileDownload implements RequestHandler {
 	use StandardGet, DownloadFileByPath;

@@ -2,7 +2,7 @@
 ob_start();
 require(__DIR__ . '/../../vendor/autoload.php');
 
-use \ncsa\phpmcj\Application;
+use \net\peacefulcraft\apirouter\Application;
 require(__DIR__ . '/../config/config.test.php');
 
 $Application = new Application($config);

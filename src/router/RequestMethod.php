@@ -1,7 +1,7 @@
 <?php
-namespace ncsa\phpmcj\router;
+namespace net\peacefulcraft\apirouter\router;
 
-use ncsa\phpmcj\enum\Enum;
+use net\peacefulcraft\apirouter\enum\Enum;
 
 class RequestMethod extends Enum {
 	const OTHER = "other";

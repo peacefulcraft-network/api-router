@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmcj\util;
+namespace net\peacefulcraft\apirouter\util;
 
 use RuntimeException;
 

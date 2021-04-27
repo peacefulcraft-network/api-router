@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmcj\console;
+namespace net\peacefulcraft\apirouter\console;
 
 interface Directive {
   public function getName(): string;

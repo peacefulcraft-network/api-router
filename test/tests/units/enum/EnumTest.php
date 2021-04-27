@@ -1,6 +1,6 @@
 <?php
 
-use ncsa\phpmcj\test\enums\TestEnum;
+use net\peacefulcraft\apirouter\test\enums\TestEnum;
 use PHPUnit\Framework\TestCase;
 
 class EnumTest extends TestCase {

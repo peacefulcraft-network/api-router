@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmcj\enum;
+namespace net\peacefulcraft\apirouter\enum;
 
 use JsonSerializable;
 use ReflectionClass;

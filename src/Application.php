@@ -1,10 +1,9 @@
 <?php
-namespace ncsa\phpmcj;
+namespace net\peacefulcraft\apirouter;
 
-use ncsa\phpmcj\router\Request;
-use ncsa\phpmcj\router\RequestMethod;
-use ncsa\phpmcj\router\Response;
-use \ncsa\phpmcj\router\Router;
+use net\peacefulcraft\apirouter\router\Request;
+use net\peacefulcraft\apirouter\router\Response;
+use net\peacefulcraft\apirouter\router\Router;
 
 class Application {
 

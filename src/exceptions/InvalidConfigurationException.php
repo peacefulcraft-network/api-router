@@ -1,5 +1,5 @@
 <?php
-namespace ncsa\phpmcj\exceptions;
+namespace net\peacefulcraft\apirouter\exceptions;
 
 use Exception;
 

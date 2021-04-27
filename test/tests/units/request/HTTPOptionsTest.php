@@ -1,6 +1,6 @@
 <?php
 
-use ncsa\phpmcj\router\Response;
+use net\peacefulcraft\apirouter\router\Response;
 
 class HTTPOptionsTest extends ControllerTest {
 	public function testApplicationShouldReturnCORSHeadersFromImplicitlyDefinedCORSRoute() {

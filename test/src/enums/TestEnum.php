@@ -1,7 +1,7 @@
 <?php
-namespace ncsa\phpmcj\test\enums;
+namespace net\peacefulcraft\apirouter\test\enums;
 
-use ncsa\phpmcj\enum\Enum;
+use net\peacefulcraft\apirouter\enum\Enum;
 
 class TestEnum extends Enum {
 	CONST VAL1 = "value_1";

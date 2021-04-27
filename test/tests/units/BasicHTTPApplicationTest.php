@@ -1,5 +1,5 @@
 <?php
-use ncsa\phpmcj\router\Response;
+use net\peacefulcraft\apirouter\router\Response;
 
 class BasicHTTPApplicationTest extends ControllerTest{
 

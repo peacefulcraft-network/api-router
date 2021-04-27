@@ -1,8 +1,8 @@
 <?php
-namespace ncsa\phpmcj\util\files;
+namespace net\peacefulcraft\apirouter\util\files;
 
-use ncsa\phpmcj\Application;
-use ncsa\phpmcj\router\Response;
+use net\peacefulcraft\apirouter\Application;
+use net\peacefulcraft\apirouter\router\Response;
 use RuntimeException;
 
 trait DownloadFileByPath {
