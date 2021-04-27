@@ -1,19 +1,27 @@
 <?php
 namespace ncsa\phpmcj\enum;
 
+use JsonSerializable;
 use ReflectionClass;
 use RuntimeException;
+use Stringable;
 
-abstract class Enum {
+/**
+ * Type-checked enumerated type.
+ * Only fully supports PHP primatives. Can support more complex types, so long as those
+ * types implement the 'Stringable' and 'JsonSerializable' interfaces, otherwise
+ * __toString() and json_encode() behavior will likley differ from expected.
+ */
+abstract class Enum implements Stringable, JsonSerializable {
 	private static array $_type_cache = [];
 
-	protected string|int $_value;
+	protected mixed $_value;
 	/**
 	 * Only used to access the $_value of this encapsulated enum type.
 	 * Method should not be invoked directly. See PHP __get magic method.
 	 * Access with [EnumChildObject]->_value;
 	 */
-	public function __get(string $name) {
+	public function __get(string $name): mixed {
 		if ($name !== "_value") {
 			throw new RuntimeException("Attempted to access non _value property on enumerated type.");
 		}
@@ -29,7 +37,7 @@ abstract class Enum {
 			throw new RuntimeException("Attempted to access non _value property on enumerated type.");
 		}
 
-		if (SELF::typeOf($value) === null) {
+		if (SELF::keyOf($value) === null) {
 			throw new RuntimeException("Supplied value failed enumerated type check.");
 		}
 
@@ -41,10 +49,10 @@ abstract class Enum {
 	 * @param value The value to be ecapsulated and value enforced
 	 * @throws RuntimeException When $value is not a valid representation of this type.
 	 */
-	public function __construct(string|int $value) {
+	public function __construct(mixed $value) {
 		SELF::getTypes();
 
-		if (SELF::typeOf($value) === null) {
+		if (SELF::keyOf($value) === null) {
 			throw new RuntimeException("Supplied value failed enumerated type check.");
 		}
 
@@ -54,9 +62,10 @@ abstract class Enum {
 	/**
 	 * Takes an enumerated value and attempts to resolve it to an enumeration key.
 	 * @param value: The value to convert
-	 * @return null on failure, string or integer on success 
+	 * @return Enum An enumerated type wrapper which represents the given $value
+	 * @return null on failure
 	 */
-	public static function typeOf($value):string|int|null {
+	public static function keyOf(mixed $value): ?string {
 		foreach (SELF::getTypes() as $type => $enumeration) {
 			if ($value === $enumeration) { return $type; }
 		}
@@ -66,15 +75,14 @@ abstract class Enum {
 	/**
 	 * Takes a string key and converts it to the value of the type with that key.
 	 * @param key: The string key to convert
-	 * @return String Success and the enumerated type is internally represnted by a string
-	 * @return Int Success and the enumerated type is internally represented by an integer
+	 * @param mixed Success, return the underlying value which the key is represented by
 	 * @return null Failure, no key by that name exists
 	 */
-	public static function valueOf(string $key):string|int|null {
+	public static function valueOf(string $key): mixed {
 		return SELF::getTypes()[$key];
 	}
 
-	private static function getTypes() {
+	private static function getTypes(): array {
 		$reflection = new ReflectionClass(static::class);
 
 		// Check if we've already cached these constants
@@ -84,5 +92,21 @@ abstract class Enum {
 		}
 
 		return SELF::$_type_cache[$reflection->getName()];
+	}
+
+	/**
+	 * Define behavior for casting / coercing enums into strings.
+	 * Fallback to underlying value's behavior
+	 */
+	public function __toString(): string {
+		return (string) $this->_value;
+	}
+
+	/**
+	 * Define behavior for serializing data as json
+	 * Return value as a primative
+	 */
+	public function jsonSerialize(): mixed {
+		return $this->_value;
 	}
 }
