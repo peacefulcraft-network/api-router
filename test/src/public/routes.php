@@ -5,7 +5,7 @@ use ncsa\phpmcj\router\RequestMethod;
 $router = $Application->getRouter();
 
 $router->registerRoute(RequestMethod::GET, '', [], '\ncsa\phpmcj\test\controllers\Index');
-$router->registerRoute(RequestMethod::GET, 'echo', [], '\ncsa\phpmcj\test\controllers\request\HTTPGetEcho');
+$router->registerRoute(RequestMethod::GET, '/echo', [], '\ncsa\phpmcj\test\controllers\request\HTTPGetEcho');
 $router->registerRoute(RequestMethod::GET, 'echo/:message', [], '\ncsa\phpmcj\test\controllers\request\HTTPGetEcho');
 $router->registerRoute(RequestMethod::DELETE, 'echo', [], '\ncsa\phpmcj\test\controllers\request\HTTPGetEcho');
 $router->registerRoute(RequestMethod::POST, 'echo', [], '\ncsa\phpmcj\test\controllers\request\HTTPPostEcho');
