@@ -18,7 +18,7 @@ install:
     - composer --working-dir=test/ require
 
 test:
-  image: containerhub.ncsa.tech:5000/php:8.0-cli
+  image: containerhub.ncsa.tech:5000/php:8.0-cli-alpine
   stage: test
   except:
     - tags
