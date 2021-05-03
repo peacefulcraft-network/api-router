@@ -12,11 +12,12 @@ interface Middleware {
 	 * processing completes. This is an intentional design choice which enables Middleware-based, internal
 	 * redirects, as well avoid placing arbitrarty data access restrictions on the RequestHandler constructor.
 	 *
+	 * @param array Application configuration array
 	 * @param Request The Request object from this request
 	 * @param Response The Response object for this request to populate.
 	 * @return True Request is allowed to continue
 	 * @return False Request will terminate and return an HTTP/418 response code, unless
 	 *               the response object has been otherwise populated.
 	 */
-	public function run(Request $request, Response $response): bool;
+	public function run(array $config, Request $request, Response $response): bool;
 }

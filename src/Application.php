@@ -38,7 +38,7 @@ class Application {
 				$func = new ($middlewareFunction);
 
 				// Middleware must explicity allow request to continue
-				if ($func->run($this->_request, $this->_response)) {
+				if ($func->run($this->_config, $this->_request, $this->_response)) {
 					continue;
 				
 				// Otherwise, stop processing and write out
