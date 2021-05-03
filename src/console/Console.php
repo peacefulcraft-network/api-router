@@ -68,13 +68,13 @@ class Console {
 	}
 
 	/**
-	 * Populate array of directives from all classes in the  \tsa\director\Directive namespace
+	 * Populate array of directives from all classes whom implement net\peacefulcraft\apirouter\Command
 	 */
 	private function _parseDirectives() {
 		$classes = get_declared_classes();
 		foreach($classes as $class) {
 			$meta = new \ReflectionClass($class);
-			if ($meta->implementsInterface('\\ncsa\\phpmcj\\console\\Directive')) {
+			if ($meta->implementsInterface('net\\peacefulcraft\\apirouter\\console\\Command')) {
 				$directive = new $class;
 				$this->_active_directives[$directive->getName()] = $directive;
 			}
@@ -108,7 +108,7 @@ class Console {
 	 * Launch interactive console
 	 */
 	private function _run() {
-		SELF::printLine("[yellow]NCSA [normal]Interactive Application Console");
+		SELF::printLine("[light_blue]PHP [normal]Interactive Application Console");
 		$stdin = fopen("php://stdin", "r");
 		if ($stdin === false) {
 			SELF::printLine('[red]Error opening input stream - exiting.');
@@ -116,7 +116,7 @@ class Console {
 		}
 
 		while($this->_running) {
-			SELF::printLine("[yellow]> ", false);
+			SELF::printLine("[green]> ", false);
 			$this->_last_input = trim(fgets($stdin, 1024));
 			$this->_last_args = explode(" ", $this->_last_input);
 			$this->_last_command = array_shift($this->_last_args);
@@ -134,7 +134,7 @@ class Console {
 					}
 				}
 
-				if (!$executed) { SELF::printLine('[red]Unknown command! [normal]Use [yellow]help [normal]to see available commands.'); }
+				if (!$executed) { SELF::printLine('[red]Unknown command! [normal]Use [green]help [normal]to see available commands.'); }
 			}
 		}
 

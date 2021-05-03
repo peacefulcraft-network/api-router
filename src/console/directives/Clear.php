@@ -2,14 +2,14 @@
 namespace net\peacefulcraft\apirouter\console\directives;
 
 use \net\peacefulcraft\apirouter\console\Console;
-use \net\peacefulcraft\apirouter\console\Directive;
+use \net\peacefulcraft\apirouter\console\Command;
 
-class Clear implements Directive {
+class Clear implements Command {
 	public function getName():string { return "clear"; }
 
 	public function getDescription(): string { return "Clear terminal output"; }
 
-	public function printHelpMessage(): void { Console::printLine("[light_blue]clear - " . $this->getDescription()); }
+	public function printHelpMessage(): void { Console::printLine("[light_blue]clear [normal]- " . $this->getDescription()); }
 
 	public function getArgs():array { return []; }
 

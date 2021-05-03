@@ -1,7 +1,7 @@
 <?php
 namespace net\peacefulcraft\apirouter\console;
 
-interface Directive {
+interface Command {
   public function getName(): string;
 
   public function getDescription(): string;

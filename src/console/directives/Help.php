@@ -2,9 +2,9 @@
 namespace net\peacefulcraft\apirouter\console\directives;
 
 use \net\peacefulcraft\apirouter\console\Console;
-use \net\peacefulcraft\apirouter\console\Directive;
+use \net\peacefulcraft\apirouter\console\Command;
 
-class Help implements Directive {
+class Help implements Command {
 	public function getName():string { return "help"; }
 
 	public function getDescription(): string { return "Prints help messages for other directives"; }
