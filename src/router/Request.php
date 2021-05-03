@@ -17,6 +17,14 @@ class Request {
 		public function getUri():string { return $this->_uri; }
 
 	/**
+	 * This method exists here mostly for completeness of the Request class.
+	 * This method only wrappers php's native getallheaders() method.
+	 * @return array Associative array with the request headers
+	 * @return false An error occured while parsing the request headers
+	 */
+	public function getHeaders():array|bool { return getallheaders(); }
+	
+	/**
 	 * The query parameters parsed out of the request to an associative array.
 	 */
 	private array $_uri_parameters = [];
