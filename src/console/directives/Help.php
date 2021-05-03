@@ -13,7 +13,7 @@ class Help implements Command {
 
 	public function getArgs():array { return []; }
 
-	public function execute(Console $console, array $args):int {
+	public function execute(array $config, Console $console, array $args):int {
 		if (count($args) > 0) {
 			if (isset($console->getActiveDirectives()[$args[0]])) {
 				$console->getActiveDirectives()[$args[0]]->printHelpMessage();

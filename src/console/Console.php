@@ -8,23 +8,25 @@ use \net\peacefulcraft\apirouter\util\Validator;
  */
 class Console {
 	
-	private $_interactive;
+	private bool $_interactive;
 		public function isInteractive():bool { return $this->_interactive; }
 
-	private $_OS;
+	private array $_config;
+
+	private string $_OS;
 		public function getOS():string { return $this->_OS; }
 		public function isUnix():bool { return $this->_OS === 'UNIX'; }
 		public function isWindows():bool { return $this->_OS === 'WINDOWS'; }
 
-	private $_active_directives = [];
+	private array $_active_directives = [];
 		public function getActiveDirectives():array { return $this->_active_directives; }
 
-	private $_running = true;
-	private $_last_input = "";
-	private $_last_command = "";
-	private $_last_args = [];
+	private bool $_running = true;
+	private string $_last_input = "";
+	private string $_last_command = "";
+	private array $_last_args = [];
 
-	private static $_text_colors = array(
+	private static array $_text_colors = array(
 		'[bold]'         => '1',    '[dim]'          => '2',
 		'[black]'        => '0;30', '[dark_gray]'    => '1;30',
 		'[blue]'         => '0;34', '[light_blue]'   => '1;34',
@@ -36,22 +38,24 @@ class Console {
 		'[light_gray]'   => '0;37', '[white]'        => '1;37',
 		'[normal]'       => '0;39',
 	);
-	private static $_background_colors = array(
+	private static array $_background_colors = array(
 		'[black]'        => '40',   '[red]'          => '41',
 		'[green]'        => '42',   '[yellow]'       => '43',
 		'[blue]'         => '44',   '[magenta]'      => '45',
 		'[cyan]'         => '46',   '[light_gray]'   => '47',
 	);
-	private static $_text_decoration = array(
+	private static array $_text_decoration = array(
 		'[underline]'    => '4',    '[blink]'         => '5', 
 		'[reverse]'      => '7',    '[hidden]'        => '8',
 	);
-	private static $_text_format = array(
-		'[tab]' => '  '
+	private static array $_text_format = array(
+		'[tab]' => '	'
 	);
 
-	public function __construct(bool $interactive = true) {
+	public function __construct(bool $interactive = true, array $config = []) {
 		$this->_interactive = $interactive;
+		$this->_config = $config;
+
 
 		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 			$this->_OS = 'WINDOWS';

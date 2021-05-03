@@ -10,6 +10,6 @@ interface Command {
 
   public function getArgs(): array;
 
-  public function execute(Console $console, array $args): int;
+  public function execute(array $config, Console $console, array $args): int;
 }
 ?>
