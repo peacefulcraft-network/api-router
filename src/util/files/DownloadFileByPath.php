@@ -24,6 +24,7 @@ trait DownloadFileByPath {
 		$content_length = filesize($file);
 
 		// Disable Response output
+		$response->setHttpResponseCode(Response::HTTP_OK);
 		$response->setResponseTypeRaw(true);
 		$response->setHeader('Content-Type', 'application/octet-stream');
 		$response->setHeader('Content-Description', 'File Transfer');
