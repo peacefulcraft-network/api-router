@@ -7,7 +7,7 @@ use net\peacefulcraft\apirouter\router\Response;
 
 class Neverware implements Middleware {
 
-	public function run(Request $request, Response $response): bool {
+	public function run(array $config, Request $request, Response $response): bool {
 		return false;	
 	}
 }
