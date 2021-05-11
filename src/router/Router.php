@@ -11,7 +11,7 @@ class Router {
 	/**
 	 * Register a route under the given method, at the given path, with the given middleware, served by the given controller
 	 */
-	public function registerRoute(RequestMethod|string $method, string $path, ?array $middleware, string $handler) {
+	public function registerRoute(RequestMethod|string $method, string $path, ?array $middleware, string|Controller $handler) {
 		// unpack enum
 		if ($method instanceof $method) {
 			$method = $method->_value;
@@ -30,13 +30,18 @@ class Router {
 			array_shift($path);
 		}
 
+		// Transform middleware to empty array on null
+		if ($middleware === null) {
+			$middleware = array();
+		}
+
 		$this->_registerRoute($parent, $path, $middleware, $handler);
 	}
-	private function _registerRoute(RoutingTreeNode $parent, array &$path, ?array $middleware, string $handler): void {
+	private function _registerRoute(RoutingTreeNode $parent, array &$path, array $middleware, string|Controller $handler): void {
 		// If no more path, the current level is where this handler should reside
 		if (count($path) === 0) {
 			$parent->setMiddleware($middleware);
-			$parent->setControllerNS($handler);
+			$parent->setController($handler);
 
 		// More path; we must go deeper
 		} else {
@@ -92,7 +97,7 @@ class Router {
 			$preservedCasePath = explode('/', $preservedCaseUri);
 			$Request->setUriParameters($this->_resolveParameterSegments($match, $preservedCasePath));
 			$Request->setMiddleware($match->getMiddleware());
-			$Request->setMatchedHandler($match->getControllerNS());
+			$Request->setMatchedHandler($match->getController());
 		}
 
 		return $Request;
@@ -100,7 +105,7 @@ class Router {
 	private function _resolveRoute(array &$path, RoutingTreeNode $parent): ?RoutingTreeNode {
 		$segment = array_shift($path);
 		if ($segment === null) {
-			if ($parent->getControllerNS() === null) {
+			if ($parent->getController() === null) {
 				return null;
 			}
 			return $parent;

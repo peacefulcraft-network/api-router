@@ -32,15 +32,15 @@ class RoutingTreeNode {
 	 * List of middleware (ns strings) registered on this route
 	 */
 	private array $_middleware = [];
-		public function getMiddleware(): ?array { return $this->_middleware; }
-		public function setMiddleware(array $middleware) { return $this->_middleware = $middleware; }
+		public function getMiddleware(): array { return $this->_middleware; }
+		public function setMiddleware(array $middleware = []) { return $this->_middleware = $middleware; }
 
 	/**
-	 * Controller (ns string) that is responsible for serving this route
+	 * Controller that is responsible for serving this route
 	 */
-	private ?string $_controller_ns;
-		public function getControllerNS(): ?string { return $this->_controller_ns; }
-		public function setControllerNS(string $controller_ns) { $this->_controller_ns = $controller_ns; }
+	private null|string|Controller $_controller;
+		public function getController(): null|string|Controller { return $this->_controller; }
+		public function setController(null|string|Controller $controller) { $this->_controller = $controller; }
 
 	/**
 	 * If this node has any children
@@ -57,12 +57,12 @@ class RoutingTreeNode {
 		public function getChildren(): array { return $this->_children; }
 		public function getParameterChildren(): array { return $this->_children['*']; }
 
-	public function __construct(bool $is_parameter, string $segment, int $num_assumptions_required = 0, array $middleware = [], ?string $controller_ns = null) {
+	public function __construct(bool $is_parameter, string $segment, int $num_assumptions_required = 0, array $middleware = [], null|string|Controller $controller = null) {
 		$this->_is_parameter = $is_parameter;
 		$this->_segment = $segment;
 		$this->_num_assumptions_required = $num_assumptions_required;
 		$this->_middleware = $middleware;
-		$this->_controller_ns = $controller_ns;
+		$this->_controller = $controller;
 	}
 
 	/**
@@ -92,7 +92,7 @@ class RoutingTreeNode {
 		echo "</pre>";
 	}
 	private static function _dumpTree(RoutingTreeNode $root, string $indent): void {
-		echo $indent . "SEGMENT " . $root->getSegment() . " Controller " . $root->getControllerNS() . PHP_EOL;
+		echo $indent . "SEGMENT " . $root->getSegment() . " Controller " . $root->getController() . PHP_EOL;
 		$static_children = $root->getChildren();
 		unset($static_children["*"]);
 		foreach($static_children as $child) {

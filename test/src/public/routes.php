@@ -1,6 +1,9 @@
 <?php
 
 use net\peacefulcraft\apirouter\router\RequestMethod;
+use net\peacefulcraft\apirouter\test\controllers\Index;
+use net\peacefulcraft\apirouter\test\middleware\Alwaysware;
+use net\peacefulcraft\apirouter\test\middleware\Neverware;
 
 $router = $Application->getRouter();
 
@@ -16,4 +19,9 @@ $router->registerRoute(RequestMethod::GET, 'file-download/:filename', [], '\net\
 
 $router->registerRoute(RequestMethod::GET, 'never-ware', ['\net\peacefulcraft\apirouter\test\middleware\Neverware'], '\net\peacefulcraft\apirouter\test\controllers\Index');
 $router->registerRoute(RequestMethod::GET, 'always-ware', ['\net\peacefulcraft\apirouter\test\middleware\Alwaysware'], '\net\peacefulcraft\apirouter\test\controllers\Index');
+
+// Test that Router && Application behave the same when given Middleware & Controller objects instead of strings
+$IndexController = new Index();
+$router->registerRoute(RequestMethod::GET, 'never-ware', [new Neverware()], $IndexController);
+$router->registerRoute(RequestMethod::GET, 'always-ware', [new Alwaysware()], $IndexController);
 ?>

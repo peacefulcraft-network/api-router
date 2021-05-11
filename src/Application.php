@@ -35,7 +35,11 @@ class Application {
 
 			// Middleware / body transformations
 			foreach($this->_request->getMiddleware() as $middlewareFunction) {
-				$func = new ($middlewareFunction);
+				if (is_string($middlewareFunction)) {
+					$func = new ($middlewareFunction);
+				} else {
+					$func = $middlewareFunction;
+				}
 
 				// Middleware must explicity allow request to continue
 				if ($func->run($this->_config, $this->_request, $this->_response)) {
@@ -49,8 +53,11 @@ class Application {
 				}
 			}
 
-			// Replace handler string with handler object
-			$this->_request->setMatchedHandler(new ($this->_request->getMatchedHandler()));
+			// Check if handler is an FQNS string, or already a Controller object
+			if (is_string($this->_request->getMatchedHandler())) {
+				// Replace handler string with handler object
+				$this->_request->setMatchedHandler(new ($this->_request->getMatchedHandler()));
+			}
 
 			// Actually handle the request
 			$this->_request->getMatchedHandler()->handle($this->_config, $this->_request, $this->_response);
