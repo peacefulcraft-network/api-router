@@ -133,7 +133,7 @@ class Console {
 				foreach($this->_active_directives as $directive) {
 					if (strcasecmp($this->_last_command, $directive->getName()) === 0) {
 						$executed = true;
-						$directive->execute($this, $this->_last_args);
+						$directive->execute($this->_config, $this, $this->_last_args);
 						break;
 					}
 				}

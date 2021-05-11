@@ -6,14 +6,14 @@ use RuntimeException;
 
 class ConsoleApplication {
 
-	public function __construct(bool $interactive, array $directive_paths = []) {
+	public function __construct(bool $interactive, array $directive_paths = [], array $config = []) {
 		array_push($directive_paths, __DIR__ . '/console/directives');
 		
 		foreach($directive_paths as $directive_set) {
 			$this->loadDirective($directive_set);
 		}
 
-		$console = new Console($interactive);
+		$console = new Console($interactive, $config);
 	}
 
 	public function loadDirective(string $path): void {
