@@ -27,22 +27,6 @@ abstract class Enum implements Stringable, JsonSerializable {
 		}
 		return $this->_value;
 	}
-	/**
-	 * Only used to set the $_value of this encapsulated enum type.
-	 * Method should not be invoked directly. See PHP __set magic method.
-	 * Access with [EnumChildObject]->_value = value;
-	 */
-	public function __set(string $name, mixed $value) {
-		if ($name !== "_value") {
-			throw new RuntimeException("Attempted to access non _value property on enumerated type.");
-		}
-
-		if (SELF::keyOf($value) === null) {
-			throw new RuntimeException("Supplied value failed enumerated type check.");
-		}
-
-		$this->_value = $value;
-	}
 
 	/**
 	 * Should only be called by a child class during instantiation.
