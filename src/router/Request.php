@@ -48,14 +48,14 @@ class Request {
 	/**
 	 * The handler which a router found is responsible for processing requests to this uri
 	 * Handler is kept as a fully qualified, namespaced class name until after middleware is
-	 * run. This allows for use of RequestHandler constructors in an intuitive manor.
+	 * run. This allows for use of Controller constructors in an intuitive manor.
 	 */
-	private string|RequestHandler|null $_matched_handler = null;
-		public function getMatchedHandler():string|RequestHandler|null { return $this->_matched_handler; }
-		public function setMatchedHandler(string|RequestHandler $request_handler) { $this->_matched_handler = $request_handler; }
+	private string|Controller|null $_matched_handler = null;
+		public function getMatchedHandler():string|Controller|null { return $this->_matched_handler; }
+		public function setMatchedHandler(string|Controller $request_handler) { $this->_matched_handler = $request_handler; }
 
 	/**
-	 * Indicates whether the Request has been resolved to a RequestHandler by a router.
+	 * Indicates whether the Request has been resolved to a Controller by a router.
 	 */
 	public function hasMatchedHandler():bool { return $this->_matched_handler !== null; }
 

@@ -1,7 +1,7 @@
 <?php
 namespace net\peacefulcraft\apirouter\router;
 
-interface RequestHandler {
+interface Controller {
     /**
      * Perform the logic, operation, query, etc which this route is designed to execute.
      * handle() will be called when a route which this controller is registered to handle
