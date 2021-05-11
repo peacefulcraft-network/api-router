@@ -74,6 +74,8 @@ class Response implements \JsonSerializable{
 	}
 
 	public const HTTP_OK = 200;
+	public const HTTP_CREATED = 201;
+	public const HTTP_ACCEPTED = 202;
 	public const HTTP_EMPTY_RESPONSE = 204;
 	public const HTTP_REDIRECT_PERMANENTLY = 301;
 	public const HTTP_REDIRECT_TEMPORARLY = 302;
