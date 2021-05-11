@@ -35,6 +35,11 @@ class Response implements \JsonSerializable{
 	public function setHttpResponseCode(int $httpResponseCode): void {
 		$this->_httpResponseCode = $httpResponseCode;
 		http_response_code($httpResponseCode);
+
+		// If empty response, disable framework output
+		if ($httpResponseCode === Response::HTTP_EMPTY_RESPONSE) {
+			$this->setResponseTypeRaw(true);
+		}
 	}
 
 	/**
