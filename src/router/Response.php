@@ -1,6 +1,9 @@
 <?php
 namespace net\peacefulcraft\apirouter\router;
 
+use JsonSerializable;
+use SplFixedArray;
+
 class Response implements \JsonSerializable{
 	private $_isRaw;
 		public function setResponseTypeRaw(bool $isRaw): void { $this->_isRaw = $isRaw; }
@@ -20,9 +23,10 @@ class Response implements \JsonSerializable{
 		public function setErrorMessage(string $errorMessage): void { $this->_errorMessage = $errorMessage; }
 		public function getErrorMessage(): string { return $this->_errorMessage; }
 
-	private $_data;
-		public function setData(array $data): void { $this->_data = $data; }
-		public function getData(): array { return $this->_data; }
+	// PHP arrays are jsonSerializable, but don't implemne the interface, unfortunantly.
+	private JsonSerializable|array|SplFixedArray $_data;
+		public function setData(JsonSerializable|array|SplFixedArray $data): void { $this->_data = $data; }
+		public function getData(): JsonSerializable|array|SplFixedArray { return $this->_data; }
 
 	public function __construct(int $httpResponseCode = 418, array $data = [], int $errorCode = 0, string $errorMessage = '') {
 		$this->_isRaw = false;
