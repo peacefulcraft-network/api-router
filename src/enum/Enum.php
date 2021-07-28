@@ -93,4 +93,22 @@ abstract class Enum implements Stringable, JsonSerializable {
 	public function jsonSerialize(): mixed {
 		return $this->_value;
 	}
+
+	/**
+	 * Support PHP serialize() calls. This method is often called
+	 * when using PHP's internal Session system which uses built-in
+	 * serialization for storing $_SESSION[] values;
+	 */
+	public function __serialize(): array {
+		return ['_value' => $this->_value];
+	}
+
+	/**
+	 * Support PHP unserialize() calls. This method is often called
+	 * when using PHP's internal Session system which uses built-in
+	 * unserialization for populating $_SESSION[] values
+	 */
+	public function __unserialize(array $data): void {
+		$this->__construct($data['_value']);
+	}
 }
