@@ -35,5 +35,15 @@ class EnumTest extends TestCase {
 		$this->assertEquals("value_3", TestEnum::valueOf("VAL3"));
 		$this->assertEquals("value_4", TestEnum::valueOf("VAL4"));
 	}
+
+	public function testEnumSerializationAndUnserialization() {
+		$testEnum = new TestEnum(TestEnum::VAL1);
+		$serializedEnum = serialize($testEnum);
+		// Serialize PHP Assoc Array w/ 1 k/v pair
+		$this->assertEquals('O:47:"net\peacefulcraft\apirouter\test\enums\TestEnum":1:{s:6:"_value";s:7:"value_1";}', $serializedEnum);
+
+		$newEnum = unserialize($serializedEnum);
+		$this->assertEquals(strval($newEnum), TestEnum::VAL1);
+	}
 }
 ?>
