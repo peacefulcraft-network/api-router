@@ -1,16 +1,15 @@
 <?php
 namespace net\peacefulcraft\apirouter\console;
 
+use net\peacefulcraft\apirouter\api\ApplicationCommandProvider;
 use \net\peacefulcraft\apirouter\util\Validator;
+use ReflectionClass;
+
 /**
  * Interactive console
  * Text styling credit: https://gist.github.com/sallar/5257396
  */
 class Console {
-	
-	private bool $_interactive;
-		public function isInteractive():bool { return $this->_interactive; }
-
 	private array $_config;
 
 	private string $_OS;
@@ -20,6 +19,11 @@ class Console {
 
 	private array $_active_directives = [];
 		public function getActiveDirectives():array { return $this->_active_directives; }
+		public function registerCommand(ApplicationCommandProvider $Plugin, Command $Command): void {
+			$prefix = (strlen($Plugin->getPrefix() === 0))? strtolower((new ReflectionClass($Plugin))->getShortName()) : $Plugin->getPrefix();
+			$prefix = "${prefix}:";
+			$this->_active_directives[strtolower($prefix . $Command->getName())] = $Command;
+		}
 
 	private bool $_running = true;
 	private string $_last_input = "";
@@ -52,8 +56,7 @@ class Console {
 		'[tab]' => '	'
 	);
 
-	public function __construct(bool $interactive = true, array $config = []) {
-		$this->_interactive = $interactive;
+	public function __construct(array $config = []) {
 		$this->_config = $config;
 
 
@@ -62,56 +65,28 @@ class Console {
 		} else {
 			$this->_OS = 'UNIX';
 		}
-		$this->_parseDirectives();
-		if ($interactive === true) {
-			$this->_run();
-		} else {
-			$this->_runOnce();
-		}
-		$this->_cleanup();
-	}
-
-	/**
-	 * Populate array of directives from all classes whom implement net\peacefulcraft\apirouter\Command
-	 */
-	private function _parseDirectives() {
-		$classes = get_declared_classes();
-		foreach($classes as $class) {
-			$meta = new \ReflectionClass($class);
-			if ($meta->implementsInterface('net\\peacefulcraft\\apirouter\\console\\Command')) {
-				$directive = new $class;
-				$this->_active_directives[$directive->getName()] = $directive;
-			}
-		}
 	}
 
 	/**
 	 * Non-interactive console. Executes command from CLI arguments and exist.
 	 */
-	private function _runOnce() {
-		GLOBAL $argc, $argv;
-		if ($argc > 0) {
-			$this->_last_command = array_shift($argv);
-			$this->_last_args = $argv;
-			$this->_last_input = $this->_last_command . " " . implode(" ", $this->_last_args);
-			
-			$executed = false;
-			foreach($this->_active_directives as $directive) {
-				if (strcasecmp($this->_last_command, $directive->getName()) === 0) {
-					$executed = true;
-					$directive->execute($this, $this->_last_args);
-					break;
-				}
-			}
-
-			if (!$executed) { SELF::printLine('[red]Unknown command! [normal]Use [light_purple]help [normal]to see available commands.'); }
+	public function runCommand(string $command_string): int {
+		$this->_last_input = trim($command_string);
+		$this->_last_args = explode(" ", $this->_last_input);
+		$this->_last_command = array_shift($this->_last_args);
+		
+		if (array_key_exists($this->_last_command, $this->_active_directives)) {
+			return $this->_active_directives[$this->_last_command]->execute($this->_config, $this, $this->_last_args);
+		} else {
+			SELF::printLine('[red]Unknown command! [normal]Use [light_purple]help [normal]to see available commands.');
+			return 1;
 		}
 	}
 
 	/**
 	 * Launch interactive console
 	 */
-	private function _run() {
+	public function run(): void {
 		SELF::printLine("[light_blue]PHP [normal]Interactive Application Console");
 		$stdin = fopen("php://stdin", "r");
 		if ($stdin === false) {
@@ -125,27 +100,22 @@ class Console {
 			$this->_last_args = explode(" ", $this->_last_input);
 			$this->_last_command = array_shift($this->_last_args);
 
-			if ($this->_last_input === 'exit') {
+			// If no prefix was specified, default to STD command prefix
+			if (strpos($this->_last_command, ':') === false) { $this->_last_command = 'std:' . $this->_last_command; }
+
+			if ($this->_last_input === 'exit' || $this->_last_input === 'std:exit') {
 				$this->_running = false;
 
 			} else {
-				$executed = false;
-				foreach($this->_active_directives as $directive) {
-					if (strcasecmp($this->_last_command, $directive->getName()) === 0) {
-						$executed = true;
-						$directive->execute($this->_config, $this, $this->_last_args);
-						break;
-					}
+				if (array_key_exists($this->_last_command, $this->_active_directives)) {
+					$this->_active_directives[$this->_last_command]->execute($this->_config, $this, $this->_last_args);
+				} else {
+					SELF::printLine('[red]Unknown command! [normal]Use [light_purple]help [normal]to see available commands.');
 				}
-
-				if (!$executed) { SELF::printLine('[red]Unknown command! [normal]Use [green]help [normal]to see available commands.'); }
 			}
 		}
 
 		fclose($stdin);
-	}
-
-	private function _cleanup() {
 	}
 
 	/**

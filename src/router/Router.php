@@ -13,7 +13,7 @@ class Router {
 	 */
 	public function registerRoute(RequestMethod|string $method, string $path, ?array $middleware, string|Controller $handler) {
 		// unpack enum
-		if ($method instanceof $method) {
+		if ($method instanceof RequestMethod) {
 			$method = $method->_value;
 		}
 
@@ -69,7 +69,7 @@ class Router {
 	 */
 	public function resolve(string $uri) : Request {
 		$Request = new Request($uri);
-		$is_web_request = isset($_SERVER['REQUEST_METHOD']) && strlen($_SERVER['REQUEST_METHOD']) > 0;
+		$is_web_request = array_key_exists('REQUEST_METHOD', $_SERVER) && strlen($_SERVER['REQUEST_METHOD']) > 0;
 		if ($is_web_request) {
 			$Request->setEMethod(new RequestMethod(strtolower($_SERVER['REQUEST_METHOD'])));
 		} else {
@@ -95,7 +95,9 @@ class Router {
 
 			// set uri parameters
 			$preservedCasePath = explode('/', $preservedCaseUri);
-			$Request->setUriParameters($this->_resolveParameterSegments($match, $preservedCasePath));
+			$positionalUriParameters = $this->_resolveParameterSegments($match, $preservedCasePath);
+			$uriParameters = array_merge($_GET, $positionalUriParameters);
+			$Request->setUriParameters($uriParameters);
 			$Request->setMiddleware($match->getMiddleware());
 			$Request->setMatchedHandler($match->getController());
 		}

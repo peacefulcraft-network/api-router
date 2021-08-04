@@ -21,8 +21,8 @@ class Help implements Command {
 				Console::printLine("[red]Unknown directive [light_blue]" . $args[0]);
 			}
 		} else {
-			foreach($console->getActiveDirectives() as $directive) {
-				Console::printLine("[light_blue]" . $directive->getName() . "[normal] " . $directive->getDescription());
+			foreach($console->getActiveDirectives() as $name => $directive) {
+				Console::printLine("[light_blue]" . $name . "[normal] " . $directive->getDescription());
 			}
 		}
 		return 0;

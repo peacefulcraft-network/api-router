@@ -36,7 +36,7 @@ class Request {
 	 */
 	private array $_body = [];
 		public function getBody(): array { return $this->_body; }
-		public function setBody(array $body):void { $this->_body = $body; } 
+		public function setBody(array $body): void { $this->_body = $body; }
 
 	/**
 	 * List of Middleware functions to be invoked during request pre-processing.
@@ -61,5 +61,24 @@ class Request {
 
 	public function __construct(string $uri) {
 		$this->_uri = $uri;
+	}
+
+	/**
+	 * Parses the request body and assigns values to $_POST
+	 */
+	public function parseBody(string $body): void {
+		// Handle json requests
+		$this->_body = $_POST;
+
+		if (!array_key_exists('CONTENT_TYPE', $_SERVER)) { return; }
+
+		switch(strtolower($_SERVER['CONTENT_TYPE'])) {
+			case 'application/json':
+				$requestBody = json_decode($body, true);
+				if (json_last_error() === JSON_ERROR_NONE) {
+					$this->_body = array_merge($this->_body, $requestBody);
+				}
+			break;
+		}
 	}
 }
