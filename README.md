@@ -8,6 +8,21 @@ A simple PHP framework providing utilities for
 ## Usage
 This framework is most easily integrated into an environment using the PSR-4 naming standard with class auto-loading.
 
+Add this repo to the `repositories` section of your `composer.json`.
+```json
+"repositories": [
+   {
+     "type": "vcs",
+     "url": "https://github.com/peacefulcraft-network/api-router"
+   }
+ ]
+ ```
+ 
+ Install the library
+ ```
+ composer require pcn/api-router
+ ```
+
 ### Routing
 ```php
 ob_start();
