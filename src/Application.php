@@ -14,9 +14,7 @@ use net\peacefulcraft\apirouter\router\Request;
 use net\peacefulcraft\apirouter\router\RequestMethod;
 use net\peacefulcraft\apirouter\router\Response;
 use net\peacefulcraft\apirouter\router\Router;
-use net\peacefulcraft\apirouter\router\RoutingTreeNode;
 use ReflectionClass;
-use RouterRoutingTest;
 use RuntimeException;
 
 class Application implements ExtensibleApplication {
