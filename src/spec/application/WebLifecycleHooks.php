@@ -1,6 +1,6 @@
 <?php namespace net\peacefulcraft\apirouter\spec\application;
 
-interface WebLifecycleHooks {
+interface WebLifecycleHook {
 
 	/**
 	 * The Application has been booted, but not yet been asked to resolve

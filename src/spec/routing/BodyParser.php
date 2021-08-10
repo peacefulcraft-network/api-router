@@ -2,7 +2,11 @@
 
 interface BodyParser {
 
-	public function parse(?string $body): mixed;
+	/**
+	 * @param null|string $body Contents of php://input.
+	 * @return array Parsed contents of body.
+	 */
+	public function parse(?string $body): array;
 
 }
 
