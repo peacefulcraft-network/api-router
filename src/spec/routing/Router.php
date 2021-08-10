@@ -1,6 +1,6 @@
 <?php namespace net\peacefulcraft\apirouter\spec\router;
 
-use net\peacefulcraft\apirouter\router\Controller;
+use net\peacefulcraft\apirouter\spec\router\Controller;
 
 interface Router {
 

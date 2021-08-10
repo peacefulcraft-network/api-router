@@ -9,7 +9,7 @@ use net\peacefulcraft\apirouter\api\ApplicationRouteProvider;
 use net\peacefulcraft\apirouter\api\ExtensibleApplication;
 use net\peacefulcraft\apirouter\console\APIRouterSTDPlugin;
 use net\peacefulcraft\apirouter\console\Console;
-use net\peacefulcraft\apirouter\router\Controller;
+use net\peacefulcraft\apirouter\spec\router\Controller;
 use net\peacefulcraft\apirouter\router\Request;
 use net\peacefulcraft\apirouter\router\RequestMethod;
 use net\peacefulcraft\apirouter\router\Response;

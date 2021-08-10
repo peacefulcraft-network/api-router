@@ -1,6 +1,8 @@
 <?php
 namespace net\peacefulcraft\apirouter\router;
 
+use net\peacefulcraft\apirouter\spec\router\Controller;
+
 class Request {
 
 	/**
