@@ -1,5 +1,5 @@
 <?php
-namespace net\peacefulcraft\apirouter\router;
+namespace net\peacefulcraft\apirouter\spec\router;
 
 interface Middleware {
 
