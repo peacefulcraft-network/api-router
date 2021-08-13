@@ -75,7 +75,7 @@ class Application implements ExtensibleApplication {
 		$this->_registerPluginWebRoutes();
 		$this->_request = ($Request === null)? $this->_router->resolve($_SERVER['REQUEST_URI']) : $Request;
 
-		if ($this->_request->hasMatchedHandler()) {
+		if ($this->_request->getController() !== null) {
 			
 			// Parse request body
 			$this->_request->parseBody(file_get_contents('php://input'));

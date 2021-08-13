@@ -13,7 +13,7 @@ interface Request {
 	public function getUriParameters(): array;
 
 	/**
-	 * Primarly tntdend for usage by middleware to transform the HTTP params.
+	 * Primarly intdend for usage by middleware to transform the HTTP params.
 	 * 
 	 * @param array $params Updated, parsed HTTP params.
 	 */
@@ -30,6 +30,13 @@ interface Request {
 	 * @param array $body Updated, pasred HTTP body.
 	 */
 	public function setBody(array $body): void;
+
+	/**
+	 * Get Middleware functions that need run on for this Request.
+	 * 
+	 * @return array List of Middleware.
+	 */
+	public function getMiddleware(): array;
 
 	/**
 	 * @return null|string|Controller Matched Controller that will be handling the request,

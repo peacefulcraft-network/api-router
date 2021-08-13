@@ -2,8 +2,9 @@
 namespace net\peacefulcraft\apirouter\router;
 
 use net\peacefulcraft\apirouter\spec\router\Controller;
+use net\peacefulcraft\apirouter\spec\router\Request as RouterRequest;
 
-class Request {
+class Request implements RouterRequest{
 
 	/**
 	 * Coresponds to an \net\peacefulcraft\apirouter\router\RequestMethod constant
@@ -13,10 +14,10 @@ class Request {
 		public function setEMethod(RequestMethod $request_method) {$this->_request_method = $request_method; }
 
 	/**
-	 * The request uri. Include query parameters, inline and ?.
+	 * The request path. Include query parameters, inline and ?.
 	 */
-	private string $_uri;
-		public function getUri():string { return $this->_uri; }
+	private string $_path;
+		public function getPath():string { return $this->_path; }
 
 	/**
 	 * This method exists here mostly for completeness of the Request class.
@@ -30,7 +31,7 @@ class Request {
 	 * The query parameters parsed out of the request to an associative array.
 	 */
 	private array $_uri_parameters = [];
-		public function getUriParameters(): ?array { return $this->_uri_parameters; }
+		public function getUriParameters(): array { return $this->_uri_parameters; }
 		public function setUriParameters(array $uri_parameters):void { $this->_uri_parameters = $uri_parameters; }
 
 	/**
@@ -45,24 +46,19 @@ class Request {
 	 */
 	private array $_middleware = [];
 		public function getMiddleware(): array { return $this->_middleware; }
-		public function setMiddleware(array $middleware) { $this->_middleware = $middleware; }
 
 	/**
 	 * The handler which a router found is responsible for processing requests to this uri
 	 * Handler is kept as a fully qualified, namespaced class name until after middleware is
 	 * run. This allows for use of Controller constructors in an intuitive manor.
 	 */
-	private string|Controller|null $_matched_handler = null;
-		public function getMatchedHandler():string|Controller|null { return $this->_matched_handler; }
-		public function setMatchedHandler(string|Controller $request_handler) { $this->_matched_handler = $request_handler; }
+	private string|Controller|null $_controller = null;
+		public function getController():string|Controller|null { return $this->_controller; }
 
-	/**
-	 * Indicates whether the Request has been resolved to a Controller by a router.
-	 */
-	public function hasMatchedHandler():bool { return $this->_matched_handler !== null; }
-
-	public function __construct(string $uri) {
-		$this->_uri = $uri;
+	public function __construct(string $path, array $middleware, string|Controller $controller) {
+		$this->_path = $path;
+		$this->_middleware = $middleware;
+		$this->_controller = $controller;
 	}
 
 	/**
