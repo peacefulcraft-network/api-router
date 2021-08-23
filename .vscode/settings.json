@@ -5,5 +5,7 @@
     "localPort": 8081,
     "remotePort": 8081,
     "name": "php-webserver (http://)"
-  }]
+  }],
+  "php.suggest.basic": false,
+  "php.validate.enable": false
 }

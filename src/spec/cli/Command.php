@@ -3,14 +3,19 @@
 interface Command {
 
 	/**
-	 * Add a named arguement to this function
+	 * @return string Command name, no prefix.
+	 */
+	public function getName(): string;
+
+	/**
+	 * Add a named flag to this function
 	 * 
 	 * @param mixed $types A dummy arg that will be used for it's type-hint to determine expect argument type(s).
 	 * @param bool $required Is this a required argument
 	 * @param string $arg Arg name
 	 * @return Command This command instance for Builder-style function chaining.
 	 */
-	public function addNamedArg(AcceptedTypes $types, bool $required, string $arg): Command;
+	public function addNamedFlag(AcceptedTypes $types, bool $required, string $arg): Command;
 
 	/**
 	 * Add a positional arguement. Positions are determined by position of addPositionArg() invocations.
@@ -40,11 +45,20 @@ interface Command {
 	public function setHelpMessage(string|callable $help_message): Command;
 
 	/**
-	 * Function to run when this command is invoked.
-	 * @param array $args Arguements used to invoke the command
-	 * @return int A status code. Refer to shell / exec conventions for return codes.
+	 * Parse params/args from a user entered string. [command] [args...] [params...]
+	 * @param string $command Command supplied by user / script.
+	 * 
+	 * @return array An associative array containg 'args' => [] and 'params'=> [].
 	 */
-	public function execute(array $args): int;
+	public function parseParams(string $command): array; 
+
+	/**
+	 * Execute this command object, parsing args and flags from the provided command string.
+	 * @param string $command The string command supplied by the user
+	 * 
+	 * @return int A status code. Refer to shell / exec conventions for return codes. 
+	 */
+	public function execute(array $args, array $flags): int;
 }
 
 /**
