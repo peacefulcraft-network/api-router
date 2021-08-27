@@ -1,6 +1,6 @@
 <?php namespace net\peacefulcraft\apirouter\spec\ext;
 
-use net\peacefulcraft\apirouter\spec\WebApplication;
+use net\peacefulcraft\apirouter\spec\application\WebApplication;
 
 interface WebApplicationPlugin extends Plugin {
 	/**

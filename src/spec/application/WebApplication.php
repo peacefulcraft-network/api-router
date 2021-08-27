@@ -1,5 +1,6 @@
 <?php namespace net\peacefulcraft\apirouter\spec\application;
 
+use net\peacefulcraft\apirouter\spec\ext\WebApplicationPlugin;
 use net\peacefulcraft\apirouter\spec\router\Request;
 use net\peacefulcraft\apirouter\spec\router\Response;
 use net\peacefulcraft\apirouter\spec\router\Router;
@@ -45,6 +46,8 @@ interface WebApplication extends Application {
 	 * @param callable $callabe The function or method to execute. No arguements are passed. Return values are ignored.
 	 */
 	public function registerWebLifecycleHook(WebLifecycleHook $Hook, callable $callabe): void;
+
+	public function usePlugin(WebApplicationPlugin $Plugin): void;
 }
 
 ?>

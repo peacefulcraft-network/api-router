@@ -11,7 +11,7 @@
     ],
     "autoload":{
         "psr-4":{
-            "net\\peacefulcraft\\apirouter":"src/"
+            "net\\peacefulcraft\\apirouter\\":"src/"
         }
     },
     "archive": {
@@ -21,6 +21,9 @@
     "require": {
         "php": ">=8.0"
     },
+		"suggest": {
+			"ext-yaml": ">2.2"
+		},
     "scripts": {
         "test:install-dependencies": [
             "Composer\\Config::disableProcessTimeout",

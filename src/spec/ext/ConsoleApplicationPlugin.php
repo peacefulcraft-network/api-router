@@ -1,6 +1,6 @@
 <?php namespace net\peacefulcraft\apirouter\spec\ext;
 
-use net\peacefulcraft\apirouter\spec\ConsoleApplication;
+use net\peacefulcraft\apirouter\spec\application\ConsoleApplication;
 
 interface ConsoleApplicationPlugin extends Plugin {
 

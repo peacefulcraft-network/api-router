@@ -1,4 +1,4 @@
-<?php namespace net\peacefulcraft\apirouter\spec\terminal;
+<?php namespace net\peacefulcraft\apirouter\spec\cli;
 
 interface Terminal {
 
@@ -31,6 +31,32 @@ interface Terminal {
 	 * @param string $string Text to print
 	 */
 	public function printLn(string $string): void;
+
+	/**
+	 * Print to STDErr
+	 * @param string $string Text to print
+	 */
+	public function printError(string $string): void;
+
+	/**
+	 * Print to STDErr and append PHP_EOL
+	 * @param string $string Text to print
+	 */
+	public function printErrorLn(string $string): void;
+
+	/**
+	 * Starts an interactive prompt.
+	 */
+	public function runInteractivePrompt(): void;
+
+	/**
+	 * Run the provided command with args and flags, one-off.
+	 * 
+	 * @return int The exit/return code from the executed command
+	 */
+	public function runCommand(string $command): int;
+
+	public function shutdown(): void;
 }
 
 ?>

@@ -23,13 +23,13 @@ interface Plugin {
 
 	/**
 	 * Specify a list of Plugin::classes which this Plugin depends on.
-	 * This Plugin will be started booted after and torndown before
+	 * This Plugin will be started after and torndown before
 	 * any of the listed Plugins. If an indicated Plugin is not installed,
-	 * this Plugin will still be booted. It is up to the developer to controll
+	 * this Plugin will still be started. It is up to the developer to controll
 	 * their Plugin's behavior if a dependecy does not exist. The same policy
 	 * is in effect for plugins which contain version mismatches. A warning will
 	 * be logged indicating a dependecy could not be fulfilled if a required plugin
 	 * was not found.
 	 */
-	public function pluginDepends(string $plugin): array;
+	public function pluginDepends(): array;
 }
