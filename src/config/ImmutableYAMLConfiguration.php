@@ -3,9 +3,9 @@
 use net\peacefulcraft\apirouter\spec\config\Configuration;
 use RuntimeException;
 
-class ImutableYAMLConfiguration implements Configuration {
+class ImmutableYAMLConfiguration implements Configuration {
 
-	private array $_config = [];
+	protected array $config = [];
 
 	public function __construct(string $yaml_string) {
 		$res = yaml_parse($yaml_string);
@@ -13,13 +13,13 @@ class ImutableYAMLConfiguration implements Configuration {
 			throw new RuntimeException('Error parsing YAML string');
 		}
 
-		$this->_config = $res;
+		$this->config = $res;
 	}
 
 	public function getProperty(string $property): mixed {
 		$path = explode('.', $property);
 		$path_count = count($path);
-		$arr_ptr = $this->_config;
+		$arr_ptr = $this->config;
 
 		for ($i=0; $i<$path_count; $i++) {
 			$path_segment = $path[$i];
