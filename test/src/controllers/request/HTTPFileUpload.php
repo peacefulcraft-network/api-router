@@ -2,7 +2,7 @@
 namespace net\peacefulcraft\apirouter\test\controllers\request;
 
 use net\peacefulcraft\apirouter\router\Request;
-use net\peacefulcraft\apirouter\spec\router\Controller;
+use net\peacefulcraft\apirouter\spec\route\Controller;
 use net\peacefulcraft\apirouter\router\Response;
 use net\peacefulcraft\apirouter\util\cors\StandardPut;
 

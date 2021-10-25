@@ -5,12 +5,14 @@
   "php.validate.enable": false,
 	"intelephense.stubs": [
 		"Core",
+		"curl",
 		"json",
 		"pcre",
 		"SPL",
 		"standard",
 		"readline",
 		"Reflection",
+		"superglobals",
 		"yaml"
 	]
 }

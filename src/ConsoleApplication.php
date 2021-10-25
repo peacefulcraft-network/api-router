@@ -1,5 +1,6 @@
 <?php namespace net\peacefulcraft\apirouter;
 
+use Exception;
 use net\peacefulcraft\apirouter\cli\CommandManager as CliCommandManager;
 use net\peacefulcraft\apirouter\cli\Terminal;
 use net\peacefulcraft\apirouter\spec\application\ConsoleApplication as ApplicationConsoleApplication;
@@ -40,9 +41,16 @@ class ConsoleApplication implements ApplicationConsoleApplication {
 	}
 
 	public function usePlugin(ConsoleApplicationPlugin $Plugin): void {
-		array_push($this->_plugins, $Plugin);
+		try {
+			$Plugin->startUp($this);
 
-		$Plugin->startUp($this);
+			array_push($this->_plugins, $Plugin);
+
+		} catch (Exception $ex) {
+			error_log("API-Router plugin " . get_class($Plugin) . " emitted exception during application boot.");
+			error_log($ex->getTraceAsString());
+			error_log($ex->getMessage());
+		}
 	}
 }
 

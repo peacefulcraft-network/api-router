@@ -1,6 +1,6 @@
-<?php namespace net\peacefulcraft\apirouter\spec\router;
+<?php namespace net\peacefulcraft\apirouter\spec\route;
 
-interface Request {
+interface IRequest {
 	
 	/**
 	 * @return string Raw request path requested by the HTTP client.
@@ -39,10 +39,10 @@ interface Request {
 	public function getMiddleware(): array;
 
 	/**
-	 * @return null|string|Controller Matched Controller that will be handling the request,
-	 *                                the symbol for the handler (IE ::class), or null if unamtched.
+	 * @return string|Controller Matched Controller that will be handling the request,
+	 *                    the symbol for the handler (IE ::class)
 	 */
-	public function getController(): null|string|Controller;
+	public function getController(): string|Controller;
 }
 
 ?>

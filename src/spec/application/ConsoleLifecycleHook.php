@@ -1,6 +1,6 @@
 <?php namespace net\peacefulcraft\apirouter\spec\application;
 
-interface ConsoleLifecycleHooks {
+interface ConsoleLifecycleHook {
 	/**
 	 * Terminal has received a command, but not yet begun processing it.
 	 * The command is only a string and no handler has been found yet.

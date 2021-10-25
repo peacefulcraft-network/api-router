@@ -1,10 +1,10 @@
 <?php
 namespace net\peacefulcraft\apirouter\router;
 
-use net\peacefulcraft\apirouter\spec\router\Controller;
-use net\peacefulcraft\apirouter\spec\router\Request as RouterRequest;
+use net\peacefulcraft\apirouter\spec\route\Controller;
+use net\peacefulcraft\apirouter\spec\route\IRequest;
 
-class Request implements RouterRequest{
+class Request implements IRequest {
 
 	/**
 	 * Coresponds to an \net\peacefulcraft\apirouter\router\RequestMethod constant
@@ -21,11 +21,11 @@ class Request implements RouterRequest{
 
 	/**
 	 * This method exists here mostly for completeness of the Request class.
-	 * This method only wrappers php's native getallheaders() method.
+	 * Response will just be $_SERVER
 	 * @return array Associative array with the request headers
 	 * @return false An error occured while parsing the request headers
 	 */
-	public function getHeaders():array|bool { return getallheaders(); }
+	public function getHeaders():array|bool { return $_SERVER; }
 	
 	/**
 	 * The query parameters parsed out of the request to an associative array.
@@ -52,31 +52,12 @@ class Request implements RouterRequest{
 	 * Handler is kept as a fully qualified, namespaced class name until after middleware is
 	 * run. This allows for use of Controller constructors in an intuitive manor.
 	 */
-	private string|Controller|null $_controller = null;
-		public function getController():string|Controller|null { return $this->_controller; }
+	private string|Controller $_controller;
+		public function getController():string|Controller { return $this->_controller; }
 
 	public function __construct(string $path, array $middleware, string|Controller $controller) {
 		$this->_path = $path;
 		$this->_middleware = $middleware;
 		$this->_controller = $controller;
-	}
-
-	/**
-	 * Parses the request body and assigns values to $_POST
-	 */
-	public function parseBody(string $body): void {
-		// Handle json requests
-		$this->_body = $_POST;
-
-		if (!array_key_exists('CONTENT_TYPE', $_SERVER)) { return; }
-
-		switch(strtolower($_SERVER['CONTENT_TYPE'])) {
-			case 'application/json':
-				$requestBody = json_decode($body, true);
-				if (json_last_error() === JSON_ERROR_NONE) {
-					$this->_body = array_merge($this->_body, $requestBody);
-				}
-			break;
-		}
 	}
 }

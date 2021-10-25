@@ -10,7 +10,7 @@ interface ConsoleApplication extends Application {
 
 	public function getCommandManager(): CommandManager;
 
-	public function registerHook(ConsoleLifecycleHooks $hook): void;
+	public function registerHook(string $hook): void;
 
 	public function usePlugin(ConsoleApplicationPlugin $Plugin): void;
 }
