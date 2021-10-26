@@ -1,14 +1,16 @@
 <?php
 namespace net\peacefulcraft\apirouter\test\middleware;
 
-use net\peacefulcraft\apirouter\router\Middleware;
-use net\peacefulcraft\apirouter\router\Request;
+use net\peacefulcraft\apirouter\render\PlainTextRenderingEngine;
 use net\peacefulcraft\apirouter\router\Response;
+use net\peacefulcraft\apirouter\spec\route\IRequest;
+use net\peacefulcraft\apirouter\spec\route\Middleware;
+use net\peacefulcraft\apirouter\spec\route\IResponse;
 
 class Neverware implements Middleware {
 
-	public function run(array $config, Request $request, Response $response): bool {
-		return false;	
+	public function run(array $config, IRequest $request): IResponse {
+		return new Response(Response::HTTP_NOT_PERMITTED, [], new PlainTextRenderingEngine(""));
 	}
 }
 

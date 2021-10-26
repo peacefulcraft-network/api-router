@@ -1,0 +1,72 @@
+<?php namespace net\peacefulcraft\apirouter\spec\cli;
+
+/**
+ * Terminal formatting codes
+ */
+interface Format {
+
+	CONST COLOR_BLACK = "\e[30m";
+	CONST COLOR_GREY = "\e[90m";
+	CONST COLOR_LIGHT_GREY = "\e[37m";
+
+	CONST COLOR_RED = "\e[31m";
+	CONST COLOR_LIGHT_RED = "\e[91m";
+
+	CONST COLOR_GREEN = "\e[32m";
+	CONST COLOR_LIGHT_GREEN = "\e[92m";
+
+	CONST COLOR_YELLOW = "\e[33m";
+	CONST COLOR_LIGHT_YELLOW = "\e[93m";
+
+	CONST COLOR_BLUE = "\e[34m";
+	CONST COLOR_LIGHT_BLUE = "\e[94m";
+
+	CONST COLOR_MAGENTA = "\e[35m";
+	CONST COLOR_LIGHT_MAGENTA = "\e[95m";
+
+	CONST COLOR_CYAN = "\e[36m";
+	CONST COLOR_LIGHT_CYAN = "\e[96m";
+
+	CONST COLOR_WHITE = "\e[97m";
+	CONST COLOR_RESET = "\e[39m";
+
+	CONST BG_RESET = "\e[49m";
+	CONST BG_BLACK = "\e[40m";
+	CONST BG_RED = "\e[41m";
+	CONST BG_GREEN = "\e[42m";
+	CONST BG_YELLOW = "\e[43m";
+	CONST BG_BLUE = "\e[44m";
+	CONST BG_MAGENTA = "\e[45m";
+	CONST BG_CYAN = "\e[46m";
+	CONST BG_LIGHT_GREY = "\e[47m";
+	CONST BG_GREY = "\e[100m";
+	CONST BG_LIGHT_RED = "\e[101m";
+	CONST BG_LIGHT_GREEN = "\e[102m";
+	CONST BG_LIGHT_YELLOW = "\e[103m";
+	CONST BG_LIGHT_BLUE = "\e[104m";
+	CONST BG_LIGHT_MAGENTA = "\e[105m";
+	CONST BG_LIGHT_CYAN = "\e[106m";
+	CONST BG_WHITE = "\e[107m";
+
+	CONST FMT_RESET_ALL = "\e[0m";
+
+	CONST FMT_BOLD = "\e[1m";
+	CONST FMT_RESET_BOLD = "\e[21m";
+
+	CONST FMT_DIM = "\e[2m";
+	CONST FMT_RESET_DIM = "\e[22m";
+
+	CONST FMT_UNDERLINE = "\e[4m";
+	CONST FMT_RESET_UNDERLINE = "\e[24m";
+
+	CONST FMT_BLINK = "\e[5m";
+	CONST FMT_RESET_BLINK = "\e25m";
+
+	CONST FMT_INVERT = "\e[7m";
+	CONST FMT_RESET_INVERT = "\e[27m";
+
+	CONST FMT_HIDDEN = "\e[8m";
+	CONST FMT_RESET_HIDDEN = "\e[28m";
+}
+
+?>

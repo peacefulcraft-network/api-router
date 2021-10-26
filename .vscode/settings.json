@@ -1,9 +1,18 @@
 {
   "editor.insertSpaces": false,
-  "editor.tabSize": 4,
-  "remote.SSH.defaultForwardedPorts": [{
-    "localPort": 8081,
-    "remotePort": 8081,
-    "name": "php-webserver (http://)"
-  }]
+  "editor.detectIndentation": false,
+  "php.suggest.basic": false,
+  "php.validate.enable": false,
+	"intelephense.stubs": [
+		"Core",
+		"curl",
+		"json",
+		"pcre",
+		"SPL",
+		"standard",
+		"readline",
+		"Reflection",
+		"superglobals",
+		"yaml"
+	]
 }

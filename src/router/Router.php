@@ -1,7 +1,11 @@
 <?php
 namespace net\peacefulcraft\apirouter\router;
 
-class Router {
+use net\peacefulcraft\apirouter\spec\route\Controller;
+use net\peacefulcraft\apirouter\spec\route\IRequest;
+use net\peacefulcraft\apirouter\spec\route\IRouter;
+
+class Router implements IRouter {
 	private RoutingTreeNode $_routes;
 
 	public function __construct() {
@@ -11,7 +15,7 @@ class Router {
 	/**
 	 * Register a route under the given method, at the given path, with the given middleware, served by the given controller
 	 */
-	public function registerRoute(RequestMethod|string $method, string $path, ?array $middleware, string|Controller $handler) {
+	public function registerRoute(RequestMethod|string $method, string $path, ?array $middleware, string|Controller $handler): void {
 		// unpack enum
 		if ($method instanceof RequestMethod) {
 			$method = $method->_value;
@@ -67,15 +71,7 @@ class Router {
 	 * Resolve the given URI into a Request with populated URI parameters, registered middleware,
 	 * and the controller responsible for this route, assuming a route has been registred which matches the $URI 
 	 */
-	public function resolve(string $uri) : Request {
-		$Request = new Request($uri);
-		$is_web_request = array_key_exists('REQUEST_METHOD', $_SERVER) && strlen($_SERVER['REQUEST_METHOD']) > 0;
-		if ($is_web_request) {
-			$Request->setEMethod(new RequestMethod(strtolower($_SERVER['REQUEST_METHOD'])));
-		} else {
-			$Request->setEMethod(new RequestMethod(RequestMethod::OTHER));
-		}
-
+	public function resolve(RequestMethod|string $requestMethod, string $uri) : ?IRequest {
 		$queryStartPos = strpos($uri, '?');
 		$preservedCaseUri = $uri;
 		if ($queryStartPos > 0) {
@@ -83,26 +79,51 @@ class Router {
 			$uri = strtolower($preservedCaseUri);
 		}
 
-		if (array_key_exists($Request->getEMethod()->_value, $this->_routes->getChildren())) {
+		if ($requestMethod instanceof RequestMethod) {
+			$requestMethod = $requestMethod->_value;
+		}
+		$requestMethod = strtolower($requestMethod);
+
+		if (array_key_exists($requestMethod, $this->_routes->getChildren())) {
 			$path = explode('/', $uri);
 			array_shift($path);
-			$match = $this->_resolveRoute($path, $this->_routes->getChildren()[$Request->getEMethod()->_value]);
+			$match = $this->_resolveRoute($path, $this->_routes->getChildren()[$requestMethod]);
 
 			// Return if no matched route
 			if ($match === null) {
-				return $Request;
+				return null;
 			}
 
 			// set uri parameters
 			$preservedCasePath = explode('/', $preservedCaseUri);
 			$positionalUriParameters = $this->_resolveParameterSegments($match, $preservedCasePath);
 			$uriParameters = array_merge($_GET, $positionalUriParameters);
-			$Request->setUriParameters($uriParameters);
-			$Request->setMiddleware($match->getMiddleware());
-			$Request->setMatchedHandler($match->getController());
-		}
+			// FQD NS string check
+			$Controller = $match->getController();
+			if (is_string($Controller)) {
+				$Controller = new $Controller;
+			}
 
-		return $Request;
+			$Request = new Request($uri, $match->getMiddleware(), $Controller);
+
+			foreach ($uriParameters as &$value) {
+				$value = urldecode($value);
+			}
+			// Prevent unintentional array modification if $value is used later on
+			unset($value);
+
+			$Request->setUriParameters($uriParameters);
+			$is_web_request = array_key_exists('REQUEST_METHOD', $_SERVER) && strlen($requestMethod) > 0;
+			if ($is_web_request) {
+				$Request->setEMethod(new RequestMethod($requestMethod));
+			} else {
+				$Request->setEMethod(new RequestMethod(RequestMethod::OTHER));
+			}
+
+			return $Request;
+		} else {
+			return null;
+		}
 	}
 	private function _resolveRoute(array &$path, RoutingTreeNode $parent): ?RoutingTreeNode {
 		$segment = array_shift($path);
@@ -155,5 +176,9 @@ class Router {
 		}
 
 		return $parameters;
+	}
+
+	public function dumpRoutes(): void {
+		RoutingTreeNode::dumpTree($this->_routes);
 	}
 }

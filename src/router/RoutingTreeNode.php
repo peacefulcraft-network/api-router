@@ -1,6 +1,8 @@
 <?php
 namespace net\peacefulcraft\apirouter\router;
 
+use net\peacefulcraft\apirouter\spec\route\Controller;
+
 class RoutingTreeNode {
 	/**
 	 * Parent node

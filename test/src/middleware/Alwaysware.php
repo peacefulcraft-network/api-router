@@ -1,14 +1,14 @@
 <?php
 namespace net\peacefulcraft\apirouter\test\middleware;
 
-use net\peacefulcraft\apirouter\router\Middleware;
-use net\peacefulcraft\apirouter\router\Request;
-use net\peacefulcraft\apirouter\router\Response;
+use net\peacefulcraft\apirouter\spec\route\Middleware;
+use net\peacefulcraft\apirouter\spec\route\IRequest;
+use net\peacefulcraft\apirouter\spec\route\IResponse;
 
 class Alwaysware implements Middleware {
 
-	public function run(array $config, Request $request, Response $response): bool {
-		return true;	
+	public function run(array $config, IRequest $Request): ?IResponse {
+		return null;
 	}
 }
 

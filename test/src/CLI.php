@@ -1,11 +1,11 @@
 <?php
 
-use net\peacefulcraft\apirouter\Application;
+use net\peacefulcraft\apirouter\cli\std\ApiRouterSTD;
+use net\peacefulcraft\apirouter\ConsoleApplication;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$Application = new Application([]);
+$CA = new ConsoleApplication();
+$CA->usePlugin(new ApiRouterSTD());
 
-require __DIR__ . '/public/routes.php';
-
-$Application->launchConsole();
+$CA->getTerminal()->runInteractivePrompt();

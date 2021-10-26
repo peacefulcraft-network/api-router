@@ -1,54 +1,78 @@
 <?php
 namespace net\peacefulcraft\apirouter;
 
-use BadMethodCallException;
 use Exception;
-use net\peacefulcraft\apirouter\api\ApplicationCommandProvider;
-use net\peacefulcraft\apirouter\api\ApplicationPlugin;
-use net\peacefulcraft\apirouter\api\ApplicationRouteProvider;
-use net\peacefulcraft\apirouter\api\ExtensibleApplication;
-use net\peacefulcraft\apirouter\console\APIRouterSTDPlugin;
-use net\peacefulcraft\apirouter\console\Console;
-use net\peacefulcraft\apirouter\router\Controller;
+use JsonSerializable;
+use net\peacefulcraft\apirouter\exceptions\HTTPSemanticRuntimeException;
+use net\peacefulcraft\apirouter\exceptions\RenderingEngineException;
+use net\peacefulcraft\apirouter\render\JsonSerializableRenderingEngine;
+use net\peacefulcraft\apirouter\render\PlainTextRenderingEngine;
 use net\peacefulcraft\apirouter\router\Request;
-use net\peacefulcraft\apirouter\router\RequestMethod;
 use net\peacefulcraft\apirouter\router\Response;
 use net\peacefulcraft\apirouter\router\Router;
 use net\peacefulcraft\apirouter\router\RoutingTreeNode;
-use ReflectionClass;
-use RouterRoutingTest;
+use net\peacefulcraft\apirouter\spec\application\WebApplication;
+use net\peacefulcraft\apirouter\spec\application\WebLifecycleHook;
+use net\peacefulcraft\apirouter\spec\exception\HTTPReportableException;
+use net\peacefulcraft\apirouter\spec\ext\WebApplicationPlugin;
+use net\peacefulcraft\apirouter\spec\route\IRequest;
+use net\peacefulcraft\apirouter\spec\route\IResponse;
+use net\peacefulcraft\apirouter\spec\route\IRouter;
 use RuntimeException;
 
-class Application implements ExtensibleApplication {
+class Application implements WebApplication {
+
+	private array $_plugins = [];
+
+	private array $_lifecycleHooks = [];
 
 	private array $_config = [];
-		public function getConfig():array { return $this->_config; }
+		public function getConfig(): array { return $this->_config; }
 
-	private ?Router $_router = null;
-		public function getRouter():Router { return $this->_router; }
+	private ?IRouter $_router = null;
+		public function getRouter(): IRouter { return $this->_router; }
 
-	private ?Request $_request = null;
-		public function getRequest():?Request { return $this->_request; }
+	private ?IRequest $_request = null;
+		public function getRequest(): ?Request { return $this->_request; }
 
-	private ?Response $_response = null;
-		public function getResponse():Response { return $this->_response; }
+	private ?IResponse $_response = null;
+		public function getResponse(): IResponse { return $this->_response; }
 
-	private ?Console $_console = null;
-
-	private array $_Plugins = [];
-	private APIRouterSTDPlugin $_STDPack;
+	/**
+	 * @param string Content of 'Accept' header. Framework will attempt to
+	 *               honor this output if it is supported for returning
+	 *               internal errors.
+	 */
+	private string $_acceptContentType;
 
 	public function __construct(array $config) {
 		$this->_config = $config;
 		$this->_router = new Router();
-		$this->_response = new Response();
-		$this->_STDPack = new APIRouterSTDPlugin();
-		$this->usePlugin($this->_STDPack);
-		$this->_response->setHeader('Content-Type', 'application/json');
+
+		$this->_extractDefaults();
+	}
+
+	/**
+	 * Setup computed, internal framework defaults
+	 */
+	private function _extractDefaults(): void {
+		$this->_acceptContentType = 'application/json';
+
+		if (array_key_exists('Accept', $_SERVER)) {
+			switch($acceptContentType = strtolower($_SERVER['Accept'])) {
+				case 'text/html':
+					$this->_acceptContentType = $acceptContentType;
+				
+				break; case 'text/plain':
+					$this->_acceptContentType = $acceptContentType;
+
+				break;
+			}
+		}
 	}
 
 	public function getActivePlugins(): array {
-		return $this->_Plugins;
+		return $this->_plugins;
 	}
 
 	/**
@@ -57,10 +81,11 @@ class Application implements ExtensibleApplication {
 	 * @return bool True if the plugin enabled without incident
 	 * @return bool Fakse if the plugin reported errors during startup.
 	 */
-	public function usePlugin(ApplicationPlugin $Plugin): void {
+	public function usePlugin(WebApplicationPlugin $Plugin): void {
 		try {
-			$Plugin->enablePlugin($this);
-			array_push($this->_Plugins, $Plugin);
+			$Plugin->startUp($this);
+
+			array_push($this->_plugins, $Plugin);
 
 		} catch (Exception $ex) {
 			error_log("API-Router plugin " . get_class($Plugin) . " emitted exception during application boot.");
@@ -73,57 +98,216 @@ class Application implements ExtensibleApplication {
 	 * Execute Application as a Request router and handler.
 	 * @param $Request Optionally provide a Request object to route and skip route resolution.
 	 */
-	public function handleRequest(?Request $Request=null) {
-		$this->_registerPluginWebRoutes();
-		$this->_request = ($Request === null)? $this->_router->resolve($_SERVER['REQUEST_URI']) : $Request;
+	public function handleRequest(?IRequest $Request=null): IResponse {
+		try {
+			$this->runApplicationLifecycleHooks(WebLifecycleHook::BEFORE_REQUEST_ROUTE);
+			$this->_request = ($Request === null)? $this->_router->resolve($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']) : $Request;
 
-		if ($this->_request->hasMatchedHandler()) {
-			
-			// Parse request body
-			$this->_request->parseBody(file_get_contents('php://input'));
+			// No route match
+			if ($this->_request === null) {
+				// Respond with 404
+				$this->respondToRequestWithException(
+					new HTTPSemanticRuntimeException(IResponse::HTTP_NOT_FOUND, IResponse::HTTP_NOT_FOUND,
+						'Unable to route ' . $_SERVER['REQUEST_URI'],
+						'Resource not found.'
+					)
+				);
 
-			// Middleware / body transformations
-			foreach($this->_request->getMiddleware() as $middlewareFunction) {
-				if (is_string($middlewareFunction)) {
-					$func = new ($middlewareFunction);
+			// Check that we matched a route
+			} else {
+				// Parse request body, fallback to PHP native parsing if no Content-Type header is sent.
+				if (array_key_exists('CONTENT_TYPE', $_SERVER)) {
+					$this->_request->setBody($this->parseRequestBody($_SERVER['CONTENT_TYPE'], file_get_contents('php://input')));
 				} else {
-					$func = $middlewareFunction;
+					$this->_request->setBody($_POST);
 				}
 
-				// Middleware must explicity allow request to continue
-				if ($func->run($this->_config, $this->_request, $this->_response)) {
-					continue;
-				
-				// Otherwise, stop processing and write out
-				} else {
-					echo $this->_response;
-					ob_flush();
+				$this->runApplicationLifecycleHooks(WebLifecycleHook::BEFORE_MIDDLEWARE_EXEC);
+				if (($this->_response = $this->runMiddleware()) instanceof IResponse) {
+					$this->respondToRequest($this->_response);
+					$this->runApplicationShutdown();
 					exit();
 				}
+
+				// Actually handle the request
+				$this->runApplicationLifecycleHooks(WebLifecycleHook::BEFORE_CONTROLLER_EXEC);
+				$this->_response = $this->_request->getController()->handle($this->_config, $this->_request);
+				$this->respondToRequest($this->_response);
+				$this->runApplicationShutdown();
 			}
 
-			// Check if handler is an FQNS string, or already a Controller object
-			if (is_string($this->_request->getMatchedHandler())) {
-				// Replace handler string with handler object
-				$this->_request->setMatchedHandler(new ($this->_request->getMatchedHandler()));
+		/*
+			Handle generic Exception where we can extract few details.
+		 */
+		} catch (Exception $Ex) {
+			$SemanticException = new HTTPSemanticRuntimeException($Ex->getCode(), IResponse::HTTP_INTERNAL_ERROR, $Ex->getMessage(), 'An internal server error occured. Please contact support.', $Ex);
+			$this->_response = new Response($SemanticException->getHTTPResponseCode(), []);
+			$this->_response = new Response($SemanticException->getHTTPResponseCode(), []);
+			$this->respondToRequestWithException($SemanticException);
+
+		/*
+			Handle detailed, semantic Exception with reportable values.
+		*/
+		} catch (HTTPReportableException $SemanticException) {
+			$this->_response = new Response($SemanticException->getHTTPResponseCode(), []);
+			$this->respondToRequestWithException($SemanticException);
+		}
+		
+		$this->runApplicationShutdown();
+		return $this->_response;
+	}
+
+	/**
+	 * Takes the given $input and parses according to the mime type in $type
+	 * 
+	 * @param string $type MimeType of the content in $input
+	 * @param string $input Request body to parse.
+	 * 
+	 * @throws HTTPSemanticRuntimeException Parsing error occured. Malformed body or mime type does not match $input format.
+	 */
+	protected function parseRequestBody(string $type, string $input): array {
+		switch(strtolower(($type))) {
+			case 'application/json':
+				$body = json_decode($input, true);
+				if ($body === false) {
+					throw new HTTPSemanticRuntimeException(IResponse::HTTP_BAD_REQUEST, IResponse::HTTP_BAD_REQUEST, 'mime type indicated request body of type application/json, but input was not JSON parsable. ' . json_last_error_msg(), 'mime type indicated request body of type application/json, but input was not JSON parsable.');
+				}
+
+				return $body;
+
+			// No explicit parsing required or implemented. Fallback to PHP native parsing.
+			break; default:
+				return $_POST;
+			break;
+		}
+	}
+
+	/**
+	 * Execute request middleware
+	 * 
+	 * @return bool Ffalse Continue Request processing.
+	 * @return bool True Halt processing.
+	 */
+	protected function runMiddleware(): ?IResponse {
+		// Middleware / body transformations
+		foreach($this->_request->getMiddleware() as $middlewareFunction) {
+			if (is_string($middlewareFunction)) {
+				$func = new ($middlewareFunction);
+			} else {
+				$func = $middlewareFunction;
 			}
 
-			// Actually handle the request
-			$this->_request->getMatchedHandler()->handle($this->_config, $this->_request, $this->_response);
-			echo $this->_response;
+			$Response = $func->run($this->_config, $this->_request);
 
-		} else {
-			// No matched handler, issue a 4040
-			$this->_response->setHttpResponseCode(Response::HTTP_NOT_FOUND);
-			$this->_response->setErrorMessage('Resource not found');
-			echo $this->_response;
+			// Check if middleware is overriding Response
+			if ($Response instanceof IResponse) {
+				return $Response;
+			}
 		}
 
-		ob_flush();
+		return null;
+	}
 
-		foreach($this->_Plugins as $Plugin) {
+	/**
+	 * Best-effort attaches a RenderEngine to the Response that will output according to
+	 * the 'Accept' header on the request. If an unknown or unsupported 'Accept' value
+	 * is received, the framework will default to JSON output or text if the Response
+	 * does not appear to be JSON serializable.
+	 * 
+	 * @param Exception $Exception The thrown Exception to respond with.
+	 */
+	protected function respondToRequestWithException(HTTPReportableException $Exception): void {
+		$this->_response = new Response($Exception->getHTTPResponseCode(), []);
+
+		switch($this->_acceptContentType) {
+			case 'text/html':
+				$text = "<h2>Exception: " . get_class($Exception) . "</h2>";
+				$text .= "<i>Something went wrong while handling your request.</i><br/>";
+				$text .= "<p><b>Code:</b> " . $Exception->getCode() . "</p>";
+				$text .= "<p><b>Message:</b> " . $Exception->getHTTPResponseErrorMessage() . "</p>";
+				$RenderEngine = new PlainTextRenderingEngine($text);
+
+			break; case 'text/plain':
+				$text = "Exception: " . get_class($Exception) . PHP_EOL;
+				$text .= "Something went wrong while handling your request." . PHP_EOL;
+				$text .= "Code: " . $Exception->getCode() . PHP_EOL;
+				$text .= "Message: " . $Exception->getHTTPResponseErrorMessage() . PHP_EOL;
+				$RenderEngine = new PlainTextRenderingEngine($text);
+
+			// Default JSON
+			break; default:
+				$jsonSerializableException = $Exception;
+				if (!($Exception instanceof JsonSerializable)) {
+					$jsonSerializableException = [
+						"error_no" => $Exception->getCode(),
+						"error_message" => $Exception->getHTTPResponseErrorMessage()
+					];
+				}
+
+				$RenderEngine = new JsonSerializableRenderingEngine($jsonSerializableException);
+
+			break;
+		}
+
+		$this->_response->setRenderEngine($RenderEngine);
+		try {
+			http_response_code($this->_response->getHttpResponseCode());
+			$output = $RenderEngine->render($this->_response);
+			foreach ($this->_response->getResponseHeaders() as $header => $value) {
+				header("${header}: $value");
+			}
+			echo $output;
+		} catch (RenderingEngineException $ex) {
+			/*
+				If something goes wrong in rendering the Exception,
+				last-resort fallback to plaintext.
+
+				If text/plain rendering fails, bail out.
+			*/
+			if ($this->_acceptContentType === 'text/plain') {
+				echo "Several crtical errors occured during request processing, including during error reporting mechanisms. Check server logs for more details.";
+			} else {
+				$this->_acceptContentType === 'text/plain';
+				$this->respondToRequestWithException($Exception);
+			}
+		}
+		ob_flush();
+	}
+
+	/**
+	 * Handle outputing Application Response during normal Request lifecycle.
+	 * This method assumes the Response object has a RenderEngine associated with it.
+	 * For outputing internal framework errors, see Application::respondToRequestWithException().
+	 * 
+	 * @param Response $Response Programmed Application Response object to output.
+	 */
+	protected function respondToRequest(): void{
+		if ($this->_response->getRenderEngine() === null) {
+			$this->respondToRequestWithException(new RenderingEngineException(418, 418, 'Request completed succesfully, but no RenderEngine was defined for this Response.', 'Request completed succesfully, but no RenderEngine was defined for this Response.'));
+		
+		} else {
+			http_response_code($this->_response->getHttpResponseCode());
+			foreach ($this->_response->getResponseHeaders() as $header => $value) {
+				header("${header}: $value");
+			}
+			$output = $this->_response->getRenderEngine()->render($this->_response);
+			foreach ($this->_response->getResponseHeaders() as $header => $value) {
+				header("${header}: $value");
+			}
+			echo $output;
+		}
+
+		$this->runApplicationLifecycleHooks(WebLifecycleHook::BEFORE_RESPONSE_FLUSH);
+		ob_flush();
+		$this->runApplicationLifecycleHooks(WebLifecycleHook::AFTER_RESPONSE_FLUSH);
+	} 
+
+	protected function runApplicationShutdown(): void {
+		$this->runApplicationLifecycleHooks(WebLifecycleHook::BEFORE_TEARDOWN);
+
+		foreach($this->_plugins as $Plugin) {
 			try {
-				$Plugin->disablePlugin();
+				$Plugin->teardown($this);
 			} catch(RuntimeException $ex) {
 				error_log("API-Router plugin " . get_class($Plugin) . " emitted exception during application boot.");
 				error_log($ex->getTraceAsString());
@@ -133,87 +317,28 @@ class Application implements ExtensibleApplication {
 	}
 
 	/**
-	 * Reach out to all the registered plugins and ask them to register their routes.
+	 * Register one or more lifecycle hooks with the Application
+	 * 
+	 * @param string $hook The lifecycle hook to register these callables under. See WebLifecycleHook.
+	 * @param callable $callable One or more methods to call when the this hook is triggered. No args are passed, return values are ignored.
 	 */
-	private function _registerPluginWebRoutes(): void {
-		/**
-		 * Anonymous class used to force plugin-registered web routes to use
-		 * prefixes to avoid collissions with maintainer and other plugin routes.
-		 */
-		$routePrefix = '';
-		$anonRoutePrefixingClass = new class($this->_router, $routePrefix) extends Router {
-			private Router $_wrappedRouter;
-			private string $_pathPrefix;
-
-			public function __construct(Router $wrappedRouter, string &$pathPrefix) {
-				$this->_wrappedRouter = $wrappedRouter;
-				// Avoid re-declaring the class everytime and just replace var value directly so we can re-use the wrapper.
-				$this->_pathPrefix = &$pathPrefix;
-			}
-
-			public function registerRoute(RequestMethod|string $method, string $path, ?array $middleware, string|Controller $handler) {
-				if ($path[0] === '/') {
-					$path = $this->_pathPrefix . $path;
-				} else {
-					$path = $this->_pathPrefix . "/${path}";
-				}
-				$this->_wrappedRouter->registerRoute($method, $path, $middleware, $handler);
-			}
-
-			public function resolve(string $uri): Request {
-				throw new BadMethodCallException('Anonymous Router wrapper prohibits access to Router::resolve().');
-			}
-		};
-
-
-		/**
-		 * Loop through all loaded plugins and ask them to register their web-routes
-		 */
-		foreach($this->_Plugins as $Plugin) {
-			if ($Plugin instanceof ApplicationRouteProvider) {
-				$routePrefix = $Plugin->getPrefix();
-				if (strlen($routePrefix) === 0) { $routePrefix = strtolower((new ReflectionClass($Plugin))->getShortName()); }
-				
-				$Plugin->registerRoutes($anonRoutePrefixingClass);
-				// var_dump($this->_router);
-			}
+	public function registerWebLifecycleHook(string $hook, callable ...$callabe): void {
+		if (!array_key_exists($hook, $this->_lifecycleHooks)) {
+			$this->_lifecycleHooks[$hook] = [...$callabe];
+		} else {
+			array_push($this->_lifecycleHooks[$hook], ...$callabe);
 		}
 	}
 
 	/**
-	 * Execute Application in CLI mode, loading commands and diagnostic route information.
+	 * Call all registered lifecycle hooks for the given lifecycle event.
+	 * 
+	 * @param string $hook Lifecycle point that was been reached.
 	 */
-	public function launchConsole(): void {
-		// Only load commands the first time around.
-		if ($this->_console === null) {
-			$this->_console = new Console($this->_config);
-			$this->_registerCliCommands();
-		}
-		$this->_console->run();
-	}
-
-	/**
-	 * Execute Application command in non-interactive mode.
-	 */
-	public function runConsoleCommand(string $console_command): int {
-		// Only load commands the first time around.
-		if ($this->_console === null) {
-			$this->_console = new Console($this->_config);
-			$this->_registerCliCommands();
-		}
-		return $this->_console->runCommand($console_command);
-	}
-
-	/**
-	 * Loop through all loaded plugins and ask them to register their CLI commands
-	 */
-	private function _registerCliCommands(): void {
-		/**
-		 * Loop through all loaded plugins and ask them to register their CommandProviders
-		 */
-		foreach($this->_Plugins as $Plugin) {
-			if ($Plugin instanceof ApplicationCommandProvider) {
-				$Plugin->registerCommands($this->_console);
+	protected function runApplicationLifecycleHooks(string $hook): void {
+		if (array_key_exists($hook, $this->_lifecycleHooks)) {
+			foreach($this->_lifecycleHooks[$hook] as $hook) {
+				$hook();
 			}
 		}
 	}

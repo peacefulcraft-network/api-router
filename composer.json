@@ -21,6 +21,9 @@
     "require": {
         "php": ">=8.0"
     },
+		"suggest": {
+			"ext-yaml": ">2.2"
+		},
     "scripts": {
         "test:install-dependencies": [
             "Composer\\Config::disableProcessTimeout",
