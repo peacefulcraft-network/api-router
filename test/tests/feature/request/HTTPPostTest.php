@@ -15,11 +15,9 @@ class HTTPPostTest extends ControllerTest {
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $requestDataString);
 		$result = curl_exec($curl);
 
-		$expected = new Response(200, $requestData, 0, '');
-		$expected = json_encode($expected);
-
 		$this->assertEquals(curl_errno($curl), 0);
-		$this->assertEquals($expected, $result);
+		$this->assertEquals(200, curl_getinfo($curl, CURLINFO_HTTP_CODE));
+		$this->assertEquals($requestDataString, $result);
 		curl_close($curl);
 	}
 
@@ -35,14 +33,14 @@ class HTTPPostTest extends ControllerTest {
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $requestDataString);
 		$result = curl_exec($curl);
 
-		$expected = new Response(200, [
+		$expected = json_encode([
 			'query'=> 'can you parse url paramaters on the post body too',
 			'user'=>'ncsa',
 			'actions'=>'delete'
-		], 0, '');
-		$expected = json_encode($expected);
+		]);
 
 		$this->assertEquals(curl_errno($curl), 0);
+		$this->assertEquals(200, curl_getinfo($curl, CURLINFO_HTTP_CODE));
 		$this->assertEquals($expected, $result);
 		curl_close($curl);
 	}

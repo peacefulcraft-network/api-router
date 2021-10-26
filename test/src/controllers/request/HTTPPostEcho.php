@@ -10,7 +10,7 @@ use net\peacefulcraft\apirouter\spec\route\IResponse;
 class HTTPPostEcho implements Controller {
 
 	public function handle(array $config, IRequest $Request): IResponse {
-		$JSON = new JsonSerializableRenderingEngine($Request->getBody());
+		$JSON = new JsonSerializableRenderingEngine(array_merge($Request->getUriParameters(), $Request->getBody()));
 		return new Response(Response::HTTP_OK, [], $JSON);
 	}
 

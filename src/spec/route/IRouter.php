@@ -21,7 +21,7 @@ interface IRouter {
 	 * @param string $path Path to route
 	 * @param return Request object with matched middleware/Controller pairing, or null if no handler is registered for the given path.
 	 */
-	public function resolve(string $path): ?IRequest;
+	public function resolve(RequestMethod|string $method, string $path): ?IRequest;
 }
 
 ?>

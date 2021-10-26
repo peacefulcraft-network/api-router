@@ -71,7 +71,7 @@ class Router implements IRouter {
 	 * Resolve the given URI into a Request with populated URI parameters, registered middleware,
 	 * and the controller responsible for this route, assuming a route has been registred which matches the $URI 
 	 */
-	public function resolve(string $uri) : ?IRequest {
+	public function resolve(RequestMethod|string $requestMethod, string $uri) : ?IRequest {
 		$queryStartPos = strpos($uri, '?');
 		$preservedCaseUri = $uri;
 		if ($queryStartPos > 0) {
@@ -79,7 +79,10 @@ class Router implements IRouter {
 			$uri = strtolower($preservedCaseUri);
 		}
 
-		$requestMethod = $_SERVER['REQUEST_METHOD'] ?? RequestMethod::OTHER;
+		if ($requestMethod instanceof RequestMethod) {
+			$requestMethod = $requestMethod->_value;
+		}
+		$requestMethod = strtolower($requestMethod);
 
 		if (array_key_exists($requestMethod, $this->_routes->getChildren())) {
 			$path = explode('/', $uri);
@@ -112,7 +115,7 @@ class Router implements IRouter {
 			$Request->setUriParameters($uriParameters);
 			$is_web_request = array_key_exists('REQUEST_METHOD', $_SERVER) && strlen($requestMethod) > 0;
 			if ($is_web_request) {
-				$Request->setEMethod(new RequestMethod(strtolower($requestMethod)));
+				$Request->setEMethod(new RequestMethod($requestMethod));
 			} else {
 				$Request->setEMethod(new RequestMethod(RequestMethod::OTHER));
 			}
@@ -173,5 +176,9 @@ class Router implements IRouter {
 		}
 
 		return $parameters;
+	}
+
+	public function dumpRoutes(): void {
+		RoutingTreeNode::dumpTree($this->_routes);
 	}
 }

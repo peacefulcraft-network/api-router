@@ -12,7 +12,7 @@ class DaDa implements Controller {
 	public function handle(array $config, IRequest $request): IResponse { return new Response(); }
 }
 
-class RouterRoutingTest extends TestCase {
+class RouterTest extends TestCase {
 
 	public function testStaticPathMatching() {
 		/*
@@ -36,24 +36,24 @@ class RouterRoutingTest extends TestCase {
 		/*
 			Test that the registered routes return their correct controller.
 		*/
-		$Request = $router->resolve('/');
+		$Request = $router->resolve(RequestMethod::OTHER, '/');
 		$this->assertNotNull($Request);
 		$this->assertNotNull($Request->getController());
 		$this->assertEquals($L0Anon::class, $Request->getController()::class);
 
-		$Request = $router->resolve('/deeper');
+		$Request = $router->resolve(RequestMethod::OTHER, '/deeper');
 		$this->assertNotNull($Request);
 		$this->assertNotNull($Request->getController());
 		$this->assertEquals($L1Anon::class, $Request->getController()::class);
 
 
-		$Request = $router->resolve('/even/deeper');
+		$Request = $router->resolve(RequestMethod::OTHER, '/even/deeper');
 		$this->assertNotNull($Request);
 		$this->assertNotNull($Request->getController());
 		$this->assertEquals($L2Anon::class, $Request->getController()::class);
 
 
-		$Request = $router->resolve('/you/get/the/idea');
+		$Request = $router->resolve(RequestMethod::OTHER, '/you/get/the/idea');
 		$this->assertNotNull($Request);
 		$this->assertNotNull($Request->getController());
 		$this->assertEquals($L3Anon::class, $Request->getController()::class);
@@ -85,29 +85,29 @@ class RouterRoutingTest extends TestCase {
 		/*
 			Test that the registered routes return their correct controller.
 		*/
-		$Request = $router->resolve('/');
+		$Request = $router->resolve(RequestMethod::OTHER, '/');
 		$this->assertNotNull($Request);
 		$this->assertNotNull($Request->getController());
 		$this->assertEquals($L0Anon::class, $Request->getController()::class);
 
-		$Request = $router->resolve('/deeper');
+		$Request = $router->resolve(RequestMethod::OTHER, '/deeper');
 		$this->assertNotNull($Request);
 		$this->assertNotNull($Request->getController());
 		$this->assertEquals($L1Anon::class, $Request->getController()::class);
 		$this->assertEquals('deeper', $Request->getUriParameters()['val1']);
 
-		$Request = $router->resolve('/even/deeper');
+		$Request = $router->resolve(RequestMethod::OTHER, '/even/deeper');
 		$this->assertNotNull($Request);
 		$this->assertNotNull($Request->getController());
 		$this->assertEquals($L2Anon::class, $Request->getController()::class);
 
-		$Request = $router->resolve('/even/trickier/complex/idea');
+		$Request = $router->resolve(RequestMethod::OTHER, '/even/trickier/complex/idea');
 		$this->assertNotNull($Request);
 		$this->assertNotNull($Request->getController());
 		$this->assertEquals($L3Anon::class, $Request->getController()::class);
 		$this->assertEquals('idea', $Request->getUriParameters()['val1']);
 
-		$Request = $router->resolve('/even/more/complex%20path%20segment/idea');
+		$Request = $router->resolve(RequestMethod::OTHER, '/even/more/complex%20path%20segment/idea');
 		$this->assertNotNull($Request);
 		$this->assertNotNull($Request->getController());
 		$this->assertEquals($L4Anon::class, $Request->getController()::class);

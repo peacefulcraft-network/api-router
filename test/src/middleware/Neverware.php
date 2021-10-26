@@ -10,7 +10,7 @@ use net\peacefulcraft\apirouter\spec\route\IResponse;
 class Neverware implements Middleware {
 
 	public function run(array $config, IRequest $request): IResponse {
-		return new Response(Response::HTTP_EMPTY_RESPONSE, [], new PlainTextRenderingEngine(""));
+		return new Response(Response::HTTP_NOT_PERMITTED, [], new PlainTextRenderingEngine(""));
 	}
 }
 

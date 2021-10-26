@@ -1,7 +1,5 @@
 <?php
 
-use net\peacefulcraft\apirouter\router\Response;
-
 class HTTPDeleteTest extends ControllerTest {
 	public function testApplicationShouldParseUrlParamatersToGlobalGet() {
 		$curl = curl_init();
@@ -11,10 +9,10 @@ class HTTPDeleteTest extends ControllerTest {
 		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
 		$result = curl_exec($curl);
 
-		$expected = new Response(200, ['user'=>'ncsa', 'actions'=>'delete'], 0, '');
-		$expected = json_encode($expected);
+		$expected = json_encode([ 'user'=>'ncsa', 'actions'=>'delete' ]);
 
 		$this->assertEquals(curl_errno($curl), 0);
+		$this->assertEquals(200, curl_getinfo($curl, CURLINFO_HTTP_CODE));
 		$this->assertEquals($expected, $result);
 		curl_close($curl);
 	}
@@ -31,10 +29,10 @@ class HTTPDeleteTest extends ControllerTest {
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $requestDataString);
 		$result = curl_exec($curl);
 
-		$expected = new Response(200, ['query'=> 'can you parse url paramaters on the post body too'], 0, '');
-		$expected = json_encode($expected);
+		$expected = json_encode(['query'=> 'can you parse url paramaters on the post body too']);
 
 		$this->assertEquals(curl_errno($curl), 0);
+		$this->assertEquals(200, curl_getinfo($curl, CURLINFO_HTTP_CODE));
 		$this->assertEquals($expected, $result);
 		curl_close($curl);
 	}

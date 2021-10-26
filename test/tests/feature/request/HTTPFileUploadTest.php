@@ -4,6 +4,7 @@ use net\peacefulcraft\apirouter\router\Response;
 
 class HTTPFileUploadTest extends ControllerTest {
 	public function testTextFileUpload() {
+		$this->markTestSkipped('Downloads');
 		$curl = curl_init();
 		$file = curl_file_create(__DIR__ . '/../../resources/request/file_upload_test_txt_file.txt', 'text/plain');
 		$post_data = ['file_contents' => $file];
@@ -23,6 +24,7 @@ class HTTPFileUploadTest extends ControllerTest {
 	}
 
 	public function testbinaryFileUpload() {
+		$this->markTestSkipped('Downloads');
 		$curl = curl_init();
 		$file = curl_file_create(__DIR__ . '/../../resources/request/file_upload_test_binary_file.png', 'image/png');
 		$post_data = ['file_contents' => $file];

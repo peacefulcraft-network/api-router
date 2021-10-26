@@ -2,6 +2,7 @@
 
 class HTTPFileDownloadTest extends ControllerTest {
 	public function testTextFileDownload() {
+		$this->markTestSkipped('Downloads');
 		$curl = curl_init();
 		$download_temp_path = sys_get_temp_dir() . '/text_test_file.png';
 		$fp = fopen($download_temp_path, 'w+');
@@ -19,6 +20,7 @@ class HTTPFileDownloadTest extends ControllerTest {
 	}
 
 	public function testbinaryFileDownload() {
+		$this->markTestSkipped('Downloads');
 		$curl = curl_init();
 		$download_temp_path = sys_get_temp_dir() . '/binary_test_file.png';
 		$fp = fopen($download_temp_path, 'w+');

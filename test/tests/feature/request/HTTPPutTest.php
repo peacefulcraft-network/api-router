@@ -1,7 +1,5 @@
 <?php
 
-use net\peacefulcraft\apirouter\router\Response;
-
 class HTTPPutTest extends ControllerTest {
 	public function testApplicationShouldParseTextualPostBodyToGlobalPost() {
 		$curl = curl_init();
@@ -15,11 +13,8 @@ class HTTPPutTest extends ControllerTest {
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $requestDataString);
 		$result = curl_exec($curl);
 
-		$expected = new Response(200, $requestData, 0, '');
-		$expected = json_encode($expected);
-
 		$this->assertEquals(curl_errno($curl), 0);
-		$this->assertEquals($expected, $result);
+		$this->assertEquals($requestDataString, $result);
 		curl_close($curl);
 	}
 
@@ -35,12 +30,11 @@ class HTTPPutTest extends ControllerTest {
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $requestDataString);
 		$result = curl_exec($curl);
 
-		$expected = new Response(200, [
+		$expected = json_encode([
 			'query'=> 'can you parse url paramaters on the post body too',
 			'user'=>'ncsa',
 			'actions'=>'delete'
-		], 0, '');
-		$expected = json_encode($expected);
+		]);
 
 		$this->assertEquals(curl_errno($curl), 0);
 		$this->assertEquals($expected, $result);

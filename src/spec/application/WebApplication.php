@@ -35,7 +35,7 @@ interface WebApplication extends Application {
 
 	public function usePlugin(WebApplicationPlugin $Plugin): void;
 
-	public function handleRequest(IRequest $Request=null): void;
+	public function handleRequest(IRequest $Request=null): IResponse;
 }
 
 ?>

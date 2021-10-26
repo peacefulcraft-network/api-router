@@ -10,10 +10,10 @@ class HTTPGetTest extends ControllerTest {
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($curl);
 
-		$expected = new Response(200, ['user'=>'ncsa', 'actions'=>'delete'], 0, '');
-		$expected = json_encode($expected);
+		$expected = json_encode(['user'=>'ncsa', 'actions'=>'delete']);
 
 		$this->assertEquals(curl_errno($curl), 0);
+		$this->assertEquals(200, curl_getinfo($curl, CURLINFO_HTTP_CODE));
 		$this->assertEquals($expected, $result);
 		curl_close($curl);
 	}

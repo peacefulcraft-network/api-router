@@ -10,6 +10,7 @@ use net\peacefulcraft\apirouter\render\PlainTextRenderingEngine;
 use net\peacefulcraft\apirouter\router\Request;
 use net\peacefulcraft\apirouter\router\Response;
 use net\peacefulcraft\apirouter\router\Router;
+use net\peacefulcraft\apirouter\router\RoutingTreeNode;
 use net\peacefulcraft\apirouter\spec\application\WebApplication;
 use net\peacefulcraft\apirouter\spec\application\WebLifecycleHook;
 use net\peacefulcraft\apirouter\spec\exception\HTTPReportableException;
@@ -97,14 +98,23 @@ class Application implements WebApplication {
 	 * Execute Application as a Request router and handler.
 	 * @param $Request Optionally provide a Request object to route and skip route resolution.
 	 */
-	public function handleRequest(?IRequest $Request=null): void {
+	public function handleRequest(?IRequest $Request=null): IResponse {
 		try {
 			$this->runApplicationLifecycleHooks(WebLifecycleHook::BEFORE_REQUEST_ROUTE);
-			$this->_request = ($Request === null)? $this->_router->resolve($_SERVER['REQUEST_URI']) : $Request;
+			$this->_request = ($Request === null)? $this->_router->resolve($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']) : $Request;
+
+			// No route match
+			if ($this->_request === null) {
+				// Respond with 404
+				$this->respondToRequestWithException(
+					new HTTPSemanticRuntimeException(IResponse::HTTP_NOT_FOUND, IResponse::HTTP_NOT_FOUND,
+						'Unable to route ' . $_SERVER['REQUEST_URI'],
+						'Resource not found.'
+					)
+				);
 
 			// Check that we matched a route
-			if ($this->_request !== null) {
-				
+			} else {
 				// Parse request body, fallback to PHP native parsing if no Content-Type header is sent.
 				if (array_key_exists('CONTENT_TYPE', $_SERVER)) {
 					$this->_request->setBody($this->parseRequestBody($_SERVER['CONTENT_TYPE'], file_get_contents('php://input')));
@@ -124,15 +134,6 @@ class Application implements WebApplication {
 				$this->_response = $this->_request->getController()->handle($this->_config, $this->_request);
 				$this->respondToRequest($this->_response);
 				$this->runApplicationShutdown();
-
-			} else {
-				// Respond with 404
-				$this->respondToRequestWithException(
-					new HTTPSemanticRuntimeException(IResponse::HTTP_NOT_FOUND, IResponse::HTTP_NOT_FOUND,
-						'Unable to route ' . $_SERVER['REQUEST_URI'],
-						'Resouce not found.'
-					)
-				);
 			}
 
 		/*
@@ -153,6 +154,7 @@ class Application implements WebApplication {
 		}
 		
 		$this->runApplicationShutdown();
+		return $this->_response;
 	}
 
 	/**
@@ -249,6 +251,7 @@ class Application implements WebApplication {
 
 		$this->_response->setRenderEngine($RenderEngine);
 		try {
+			http_response_code($this->_response->getHttpResponseCode());
 			$output = $RenderEngine->render($this->_response);
 			foreach ($this->_response->getResponseHeaders() as $header => $value) {
 				header("${header}: $value");
@@ -280,9 +283,10 @@ class Application implements WebApplication {
 	 */
 	protected function respondToRequest(): void{
 		if ($this->_response->getRenderEngine() === null) {
-			$this->respondToRequestWithException(new RenderingEngineException('Request completed succesfully, but no RenderEngine was defined for this Response.', 418));
+			$this->respondToRequestWithException(new RenderingEngineException(418, 418, 'Request completed succesfully, but no RenderEngine was defined for this Response.', 'Request completed succesfully, but no RenderEngine was defined for this Response.'));
 		
 		} else {
+			http_response_code($this->_response->getHttpResponseCode());
 			foreach ($this->_response->getResponseHeaders() as $header => $value) {
 				header("${header}: $value");
 			}
@@ -303,7 +307,7 @@ class Application implements WebApplication {
 
 		foreach($this->_plugins as $Plugin) {
 			try {
-				$Plugin->disablePlugin();
+				$Plugin->teardown($this);
 			} catch(RuntimeException $ex) {
 				error_log("API-Router plugin " . get_class($Plugin) . " emitted exception during application boot.");
 				error_log($ex->getTraceAsString());
